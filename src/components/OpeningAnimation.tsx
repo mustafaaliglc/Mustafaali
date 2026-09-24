@@ -1,225 +1,177 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Sparkles, 
-  Layers, 
-  FolderCheck, 
-  CheckCircle2, 
-  ArrowRight,
-  Cpu,
-  Zap,
-  Globe,
-  Compass,
-  Award
-} from 'lucide-react';
-import { LaserBorderCard } from './LaserBorderCard';
 
 interface OpeningAnimationProps {
   ownerName?: string;
   onComplete: () => void;
 }
 
-const BOOT_STEPS = [
-  { id: 1, text: 'Kişisel Gelişim Modülleri Başlatılıyor...', icon: Cpu, progress: 25 },
-  { id: 2, text: '30 Haftalık Yol Haritası ve Ders Planı Yükleniyor...', icon: Layers, progress: 55 },
-  { id: 3, text: 'Google Drive & Çalışma Kaynakları Senkronize Ediliyor...', icon: FolderCheck, progress: 85 },
-  { id: 4, text: 'Kişisel Gelişim Portalı Hazır!', icon: Zap, progress: 100 },
-];
-
 export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   ownerName = 'Mustafa Ali Güleç',
   onComplete,
 }) => {
-  const [progress, setProgress] = useState(15);
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Dynamic progressive boot sequence with smooth easing
-    const t1 = setTimeout(() => {
-      setProgress(40);
-      setActiveStepIndex(1);
-    }, 400);
+    // Mount trigger for smooth entry transition
+    const mountTimer = setTimeout(() => {
+      setIsMounted(true);
+    }, 50);
 
-    const t2 = setTimeout(() => {
-      setProgress(75);
-      setActiveStepIndex(2);
-    }, 850);
-
-    const t3 = setTimeout(() => {
-      setProgress(95);
-      setActiveStepIndex(3);
-    }, 1300);
-
-    const t4 = setTimeout(() => {
-      setProgress(100);
-    }, 1650);
-
+    // Smooth fade out timer
     const fadeTimer = setTimeout(() => {
       setIsFadingOut(true);
-    }, 2100);
+    }, 2200);
 
+    // Complete and unmount timer
     const finishTimer = setTimeout(() => {
       onComplete();
-    }, 2800);
+    }, 3000);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
+      clearTimeout(mountTimer);
       clearTimeout(fadeTimer);
       clearTimeout(finishTimer);
     };
   }, [onComplete]);
 
-  const handleInstantEnter = () => {
+  const handleSkip = () => {
     setIsFadingOut(true);
-    setTimeout(onComplete, 350);
+    setTimeout(onComplete, 300);
   };
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#030611]/95 backdrop-blur-2xl overflow-hidden transition-all duration-700 ease-in-out ${
-        isFadingOut 
-          ? 'opacity-0 scale-105 pointer-events-none blur-md transition-opacity duration-700' 
-          : 'opacity-100 scale-100'
+      onClick={handleSkip}
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#03050c] overflow-hidden cursor-pointer select-none transition-all duration-800 ease-out ${
+        isFadingOut
+          ? 'opacity-0 scale-105 pointer-events-none blur-md'
+          : isMounted
+          ? 'opacity-100 scale-100'
+          : 'opacity-0 scale-95'
       }`}
     >
-      {/* Background Cyber Grid */}
-      <div className="absolute inset-0 cyber-grid-bg opacity-35 pointer-events-none" />
+      {/* Ambient Neon Atmosphere Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[150px] pointer-events-none animate-pulse-neon" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-blue-600/15 blur-[120px] pointer-events-none" />
 
-      {/* Atmospheric Neon Blooms */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] rounded-full bg-cyan-500/15 blur-[170px] pointer-events-none animate-pulse-neon" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-blue-600/20 blur-[140px] pointer-events-none animate-float-slow" />
+      {/* Subtle Background Radial Grid */}
+      <div className="absolute inset-0 cyber-grid-bg opacity-20 pointer-events-none" />
 
-      {/* Cyber Scanline Effect */}
-      <div className="absolute inset-x-0 h-28 bg-gradient-to-b from-transparent via-cyan-400/15 to-transparent pointer-events-none scanline-effect" />
+      {/* Center Iconic Minimalist Branding */}
+      <div className="relative z-10 flex flex-col items-center text-center px-4">
+        
+        {/* Custom Bespoke Geometric Vector Logo */}
+        <div className="relative mb-6 group">
+          {/* Pulsing Neon Backlight Aura */}
+          <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 opacity-60 blur-2xl animate-pulse-neon" />
 
-      {/* Rotating Cyber Neon Rings in Background */}
-      <div className="absolute w-[520px] h-[520px] rounded-full border border-cyan-500/15 animate-spin duration-[25000ms] pointer-events-none hidden sm:block" />
-      <div className="absolute w-[680px] h-[680px] rounded-full border border-dashed border-sky-400/15 animate-spin duration-[40000ms] pointer-events-none hidden sm:block" />
+          {/* SVG Futuristic Emblem */}
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center">
+            <svg
+              viewBox="0 0 120 120"
+              className="w-full h-full drop-shadow-[0_0_30px_rgba(0,240,255,0.7)]"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="magGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="40%" stopColor="#38bdf8" />
+                  <stop offset="100%" stopColor="#0284c7" />
+                </linearGradient>
+                <linearGradient id="magGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#00f0ff" />
+                  <stop offset="60%" stopColor="#0284c7" />
+                  <stop offset="100%" stopColor="#0f172a" />
+                </linearGradient>
+                <linearGradient id="neonGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00f0ff" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+              </defs>
 
-      {/* Central Futuristic Hologram Glass Card */}
-      <div className="relative z-10 w-full max-w-lg mx-4 animate-in fade-in zoom-in-95 duration-700">
-        <LaserBorderCard
-          neonColorMode="blue"
-          speed="fast"
-          active={true}
-          className="shadow-[0_0_90px_rgba(0,210,255,0.3)]"
-          innerClassName="p-6 sm:p-8 bg-[#060b18]/95 backdrop-blur-3xl border border-cyan-400/40 text-center flex flex-col items-center"
-        >
-          {/* Top Status Header */}
-          <div className="w-full flex items-center justify-between pb-3.5 border-b border-sky-900/50 text-[10px] font-mono text-sky-400/80 uppercase tracking-wider">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span className="text-emerald-400 font-bold">ONLINE</span>
-              <span className="text-sky-700">|</span>
-              <span>MAG PLATFORM 3.0</span>
-            </div>
-
-            <div className="flex items-center gap-1 text-cyan-300">
-              <Compass className="w-3.5 h-3.5 text-cyan-400 animate-spin duration-3000" />
-              <span>YOL HARİTASI</span>
-            </div>
-          </div>
-
-          {/* Glowing MAG Holographic Monogram */}
-          <div className="relative my-5 group">
-            {/* Pulsing Neon Halo */}
-            <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-300 opacity-80 blur-xl animate-pulse-neon group-hover:opacity-100 transition-opacity" />
-            
-            <div className="relative w-22 h-22 rounded-2xl bg-[#050914] border-2 border-cyan-400/90 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(0,210,255,0.6)] transform transition-transform group-hover:scale-105">
-              <span className="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-br from-white via-sky-100 to-cyan-400 drop-shadow-[0_0_15px_rgba(0,210,255,0.9)]">
-                MAG
-              </span>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-cyan-300 bg-cyan-950/90 px-2 py-0.5 rounded border border-cyan-400/50 mt-1 shadow-[0_0_8px_rgba(0,210,255,0.4)]">
-                STUDIO
-              </span>
-            </div>
-          </div>
-
-          {/* Neon Hero Title: Mustafa Ali Güleç - Kişisel Gelişim Portalı */}
-          <div className="space-y-2 mb-5 text-center">
-            {/* Neon Glowing Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/90 border border-cyan-400/60 text-xs font-bold text-cyan-300 shadow-[0_0_20px_rgba(0,210,255,0.35)]">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
-              <span className="tracking-wide">Kişisel Gelişim Portalı</span>
-            </div>
-
-            {/* Neon Glowing Name */}
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-[0_0_25px_rgba(0,210,255,0.6)]">
-              {ownerName}
-            </h1>
-
-            {/* Combined Neon Banner */}
-            <p className="text-xs sm:text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-cyan-300 to-blue-200 drop-shadow-[0_0_12px_rgba(0,210,255,0.4)]">
-              Mustafa Ali Güleç - Kişisel Gelişim Portalı
-            </p>
-
-            <p className="text-[11px] text-sky-300/70 max-w-sm mx-auto pt-0.5">
-              30 Haftalık Web Tasarımı, Yazılım Müfredatı & Google Drive Bulut Alanı
-            </p>
-          </div>
-
-          {/* Technology Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-            <span className="text-[10px] font-semibold text-sky-200 bg-sky-950/70 border border-sky-800/60 px-2.5 py-0.5 rounded-lg shadow-[0_0_10px_rgba(56,189,248,0.15)]">
-              HTML5 & CSS3
-            </span>
-            <span className="text-[10px] font-semibold text-cyan-200 bg-cyan-950/70 border border-cyan-800/60 px-2.5 py-0.5 rounded-lg shadow-[0_0_10px_rgba(0,210,255,0.15)]">
-              JavaScript & React
-            </span>
-            <span className="text-[10px] font-semibold text-emerald-200 bg-emerald-950/70 border border-emerald-800/60 px-2.5 py-0.5 rounded-lg shadow-[0_0_10px_rgba(52,211,153,0.15)]">
-              Drive Bulut
-            </span>
-            <span className="text-[10px] font-semibold text-blue-200 bg-blue-950/70 border border-blue-800/60 px-2.5 py-0.5 rounded-lg shadow-[0_0_10px_rgba(96,165,250,0.15)]">
-              30 Hafta Planı
-            </span>
-          </div>
-
-          {/* Futuristic Live Boot Sequence Progress HUD */}
-          <div className="w-full bg-[#040814]/90 border border-cyan-500/30 rounded-xl p-3.5 mb-5 text-left space-y-2.5 shadow-[inset_0_0_20px_rgba(0,210,255,0.05)]">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-2 text-sky-200 truncate">
-                {React.createElement(BOOT_STEPS[activeStepIndex].icon, {
-                  className: 'w-4 h-4 text-cyan-400 animate-pulse shrink-0',
-                })}
-                <span className="truncate font-medium">
-                  {BOOT_STEPS[activeStepIndex].text}
-                </span>
-              </div>
-              <span className="font-bold text-cyan-300 text-sm pl-2 shrink-0 drop-shadow-[0_0_8px_rgba(0,210,255,0.6)]">
-                {progress}%
-              </span>
-            </div>
-
-            {/* Glowing Cyber Progress Bar */}
-            <div className="relative w-full h-2 bg-black/80 rounded-full overflow-hidden p-0.5 border border-cyan-800/60">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-300 transition-all duration-300 ease-out shadow-[0_0_14px_rgba(0,210,255,0.9)]"
-                style={{ width: `${progress}%` }}
+              {/* Outer Hexagon Orbit Path */}
+              <polygon
+                points="60,6 106,32 106,88 60,114 14,88 14,32"
+                stroke="url(#neonGlow)"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+                className="opacity-40"
               />
-            </div>
 
-            {/* Micro Diagnostic Status */}
-            <div className="flex items-center justify-between text-[10px] font-mono text-sky-400/80 pt-0.5">
-              <span>GECİKME: 12ms</span>
-              <span className="flex items-center gap-1 text-emerald-400">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Güvenli Bağlantı Doğrulandı</span>
+              {/* Inner Diamond / Core Shield Frame */}
+              <polygon
+                points="60,14 100,36 100,84 60,106 20,84 20,36"
+                stroke="url(#magGrad1)"
+                strokeWidth="2.5"
+                strokeLinejoin="round"
+                fill="#050a17"
+                fillOpacity="0.85"
+              />
+
+              {/* Stylized Geometric 'M' Monogram Structure */}
+              <path
+                d="M34 76 L34 44 L60 66 L86 44 L86 76"
+                stroke="url(#magGrad1)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Central Energy Apex (Letter A / Compass Peak) */}
+              <path
+                d="M48 68 L60 38 L72 68"
+                stroke="url(#magGrad2)"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Central Glowing Core Orb */}
+              <circle
+                cx="60"
+                cy="58"
+                r="3.5"
+                fill="#00f0ff"
+                className="animate-ping duration-1000"
+              />
+              <circle
+                cx="60"
+                cy="58"
+                r="3"
+                fill="#ffffff"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* MAG Bold Modern Typography with Neon Glow */}
+        <div className="space-y-3">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-sky-400 pl-[0.35em] drop-shadow-[0_0_25px_rgba(0,240,255,0.7)] transition-all">
+            MAG
+          </h1>
+
+          {/* Prompt Style Modern Typography - Name & Title */}
+          <div className="flex flex-col items-center gap-1.5 pt-1">
+            <p className="text-base sm:text-lg font-bold tracking-[0.2em] text-slate-100 uppercase pl-[0.2em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+              {ownerName}
+            </p>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-400/30 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="text-xs sm:text-sm font-medium tracking-[0.15em] text-cyan-300/90 uppercase pl-[0.15em]">
+                Kişisel Gelişim Portalı
               </span>
             </div>
           </div>
+        </div>
 
-          {/* Quick Enter Action Button */}
-          <button
-            onClick={handleInstantEnter}
-            className="w-full group btn-electric text-white py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,210,255,0.4)] transition-all duration-200 cursor-pointer"
-          >
-            <span>Portala Giriş Yap</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-200" />
-          </button>
-        </LaserBorderCard>
+        {/* Minimalist touch hint at the bottom */}
+        <p className="mt-12 text-[11px] font-mono tracking-widest text-sky-400/40 uppercase animate-pulse">
+          [ Başlamak için tıkla ]
+        </p>
+
       </div>
     </div>
   );
