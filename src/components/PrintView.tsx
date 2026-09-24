@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Printer, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Printer, ArrowLeft } from 'lucide-react';
 import { ProgramStore } from '../types/schedule';
 
 interface PrintViewProps {
@@ -27,33 +27,33 @@ export const PrintView: React.FC<PrintViewProps> = ({
     <div className="space-y-6 pb-20">
       
       {/* Controls (hidden during print) */}
-      <div className="print:hidden bg-[#110b27]/90 backdrop-blur-md border border-purple-800/40 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-purple-950/30">
+      <div className="print:hidden bg-[#080d1a]/95 backdrop-blur-xl border border-sky-900/50 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-2xl shadow-black/80 transition-all duration-300 hover:border-sky-500/50">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-purple-200 bg-purple-950/70 hover:bg-purple-900/80 border border-purple-800/50 rounded-xl transition-colors"
+            className="group inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-sky-200 bg-[#0c1427] hover:bg-sky-950/90 border border-sky-800/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
             <span>Program Görünümüne Dön</span>
           </button>
 
-          <div className="inline-flex rounded-xl bg-purple-950/60 p-1 border border-purple-800/40 text-xs">
+          <div className="inline-flex rounded-xl bg-[#0b1326] p-1 border border-sky-900/60 text-xs">
             <button
               onClick={() => setPrintScope('current')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-200 ${
                 printScope === 'current'
-                  ? 'bg-purple-600 text-white shadow-xs font-semibold'
-                  : 'text-purple-300 hover:text-white'
+                  ? 'btn-electric text-white shadow-sm font-semibold'
+                  : 'text-sky-300 hover:text-white'
               }`}
             >
               Yalnızca {activeWeekNum}. Hafta
             </button>
             <button
               onClick={() => setPrintScope('all')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-200 ${
                 printScope === 'all'
-                  ? 'bg-purple-600 text-white shadow-xs font-semibold'
-                  : 'text-purple-300 hover:text-white'
+                  ? 'btn-electric text-white shadow-sm font-semibold'
+                  : 'text-sky-300 hover:text-white'
               }`}
             >
               Tüm 30 Hafta
@@ -61,11 +61,12 @@ export const PrintView: React.FC<PrintViewProps> = ({
           </div>
         </div>
 
+        {/* Yazdır Butonu with shimmer & hover lift */}
         <button
           onClick={handlePrint}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-md shadow-purple-600/30 transition-all"
+          className="btn-electric group inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white rounded-xl shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all active:scale-95"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="w-4 h-4 transition-transform group-hover:scale-120 group-hover:-rotate-12" />
           <span>Yazdır / PDF Olarak Kaydet</span>
         </button>
       </div>

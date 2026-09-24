@@ -46,27 +46,27 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#120a26] rounded-2xl shadow-2xl w-full max-w-lg border border-purple-800/60 overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+      <div className="bg-[#080d1a] rounded-2xl shadow-2xl shadow-black w-full max-w-lg border border-sky-600/50 overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-white">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-purple-900/40 flex items-center justify-between bg-purple-950/50">
+        <div className="px-6 py-4 border-b border-sky-900/50 flex items-center justify-between bg-sky-950/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-600/30 border border-purple-500/40 text-purple-300 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg btn-electric text-white flex items-center justify-center">
               <Copy className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">
                 {sourceWeek.weekNumber}. Haftanın Programını Kopyala
               </h3>
-              <p className="text-xs text-purple-300/70">
+              <p className="text-xs text-sky-300/80">
                 Bu haftanın program yapısını seçtiğiniz diğer haftalara uygular
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-purple-400 hover:text-white p-1.5 rounded-lg hover:bg-purple-900/40 transition-colors"
+            className="text-sky-400 hover:text-white p-1.5 rounded-lg hover:bg-sky-900/40 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -75,22 +75,22 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
         {/* Body */}
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-purple-200">
+            <span className="font-semibold text-sky-200">
               Hedef Haftaları Seçin ({selectedWeeks.length} seçildi):
             </span>
             <div className="space-x-2">
               <button
                 type="button"
                 onClick={handleSelectAll}
-                className="text-purple-400 hover:text-purple-300 font-semibold"
+                className="text-cyan-400 hover:text-cyan-300 font-semibold"
               >
                 Tümünü Seç
               </button>
-              <span className="text-purple-800">|</span>
+              <span className="text-sky-800">|</span>
               <button
                 type="button"
                 onClick={handleDeselectAll}
-                className="text-purple-400/70 hover:text-purple-300 font-semibold"
+                className="text-sky-400/70 hover:text-sky-300 font-semibold"
               >
                 Temizle
               </button>
@@ -98,7 +98,7 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
           </div>
 
           {/* 30 Weeks Grid Picker */}
-          <div className="grid grid-cols-5 gap-2 max-h-56 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-purple-800">
+          <div className="grid grid-cols-5 gap-2 max-h-56 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-sky-800">
             {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((weekNum) => {
               const isSource = weekNum === sourceWeek.weekNumber;
               const isSelected = selectedWeeks.includes(weekNum);
@@ -110,10 +110,10 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
                   onClick={() => toggleWeek(weekNum)}
                   className={`py-2 px-1 text-xs font-bold rounded-xl border transition-all flex items-center justify-center gap-1 ${
                     isSource
-                      ? 'bg-purple-950/20 text-purple-700/50 border-purple-900/30 cursor-not-allowed'
+                      ? 'bg-sky-950/20 text-sky-700/50 border-sky-900/30 cursor-not-allowed'
                       : isSelected
-                      ? 'bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-600/30'
-                      : 'bg-black/30 hover:bg-purple-950/60 text-purple-200 border-purple-900/40'
+                      ? 'btn-electric text-white border-cyan-400 shadow-md'
+                      : 'bg-black/40 hover:bg-sky-950/60 text-sky-200 border-sky-900/50'
                   }`}
                 >
                   {isSource ? (
@@ -131,11 +131,11 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-purple-950/40 border-t border-purple-900/40 flex items-center justify-end gap-2.5">
+        <div className="px-6 py-4 bg-[#060a14] border-t border-sky-950/80 flex items-center justify-end gap-2.5">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-purple-300 hover:text-white bg-black/30 hover:bg-purple-950/50 border border-purple-900/40 rounded-xl transition-colors"
+            className="px-4 py-2 text-xs font-medium text-sky-300 hover:text-white bg-black/40 hover:bg-sky-950/50 border border-sky-900/40 rounded-xl transition-colors"
           >
             İptal
           </button>
@@ -143,10 +143,10 @@ export const CopyWeekModal: React.FC<CopyWeekModalProps> = ({
             type="button"
             disabled={selectedWeeks.length === 0}
             onClick={handleApply}
-            className={`px-4 py-2 text-xs font-semibold text-white rounded-xl transition-all ${
+            className={`btn-electric px-4 py-2 text-xs font-semibold text-white rounded-xl transition-all ${
               selectedWeeks.length === 0
-                ? 'bg-purple-800/40 text-purple-500/50 cursor-not-allowed'
-                : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/30'
+                ? 'opacity-40 cursor-not-allowed'
+                : 'shadow-md shadow-sky-900/40'
             }`}
           >
             Seçilen Haftalara Kopyala ({selectedWeeks.length})

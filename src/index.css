@@ -1,1 +1,204 @@
 @import "tailwindcss";
+
+html, body {
+  background-color: #04060c !important;
+  color: #f1f5f9;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for electric theme */
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #060913;
+}
+::-webkit-scrollbar-thumb {
+  background: #0284c7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+@layer utilities {
+  /* Electric glow button */
+  .btn-electric {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0284c7 0%, #0070f3 50%, #00d2ff 100%);
+    box-shadow: 0 0 15px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-electric:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.65), 0 0 50px rgba(2, 132, 199, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  .btn-electric:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Electric ghost button (used for Yazdır, 30 Hafta, etc.) */
+  .btn-electric-ghost {
+    position: relative;
+    overflow: hidden;
+    background: rgba(8, 14, 28, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-electric-ghost:hover {
+    transform: translateY(-2px);
+    background: rgba(14, 165, 233, 0.15);
+    border-color: rgba(56, 189, 248, 0.8);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.35), inset 0 0 12px rgba(56, 189, 248, 0.1);
+  }
+  .btn-electric-ghost:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  /* Shimmer light beam running across on hover */
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: rotate(25deg);
+    transition: left 0.6s ease-in-out;
+  }
+  .btn-shimmer:hover::after {
+    left: 150%;
+  }
+
+  /* Card hover lift and neon border */
+  .card-electric {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  }
+  .card-electric:hover {
+    transform: translateY(-3px);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: 0 10px 30px -10px rgba(2, 132, 199, 0.35);
+  }
+}
+
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(25px, -20px) scale(1.1);
+  }
+}
+
+@keyframes pulseNeon {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Lazer Çerçeve Akışı (Animated Laser Border Beam) */
+@keyframes laserRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.laser-beam-spin {
+  animation: laserRotate 4.5s linear infinite;
+  will-change: transform;
+}
+
+.laser-beam-spin-fast {
+  animation: laserRotate 3s linear infinite;
+  will-change: transform;
+}
+
+.laser-beam-spin-slow {
+  animation: laserRotate 6s linear infinite;
+  will-change: transform;
+}
+
+/* Tam Çerçeve Lazer Kart Kapsayıcısı */
+.laser-card-wrapper {
+  position: relative;
+  border-radius: 1rem;
+  padding: 2px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+}
+
+.laser-card-wrapper-sm {
+  position: relative;
+  border-radius: 0.85rem;
+  padding: 1.5px;
+  overflow: hidden;
+}
+
+.laser-card-content {
+  position: relative;
+  z-index: 10;
+  border-radius: calc(1rem - 2px);
+  background-color: #080d1a;
+  height: 100%;
+}
+
+.laser-card-content-sm {
+  position: relative;
+  z-index: 10;
+  border-radius: calc(0.85rem - 1.5px);
+  background-color: #080d1a;
+  height: 100%;
+}
+
+/* Sinematik Hafta Geçiş Animasyonu */
+@keyframes cinematicReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Staggered item cascade */
+@keyframes itemCascadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float-slow {
+  animation: floatOrb 12s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatOrb 16s ease-in-out infinite reverse;
+}
+
+.animate-pulse-neon {
+  animation: pulseNeon 4s ease-in-out infinite;
+}
+
+.animate-cinematic-week {
+  animation: cinematicReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
