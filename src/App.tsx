@@ -255,16 +255,18 @@ export default function App() {
 
         {/* Week Navigator (shown in 'week' view) - Now with fixed weeks 1 & 2 scroll bug */}
         {currentView === 'week' && (
-          <WeekNavigator
-            weeks={store.weeks}
-            activeWeekNum={activeWeekNum}
-            onSelectWeek={(num) => setActiveWeekNum(num)}
-            neonColorMode={neonColorMode}
-          />
+          <div className="relative z-20">
+            <WeekNavigator
+              weeks={store.weeks}
+              activeWeekNum={activeWeekNum}
+              onSelectWeek={(num) => setActiveWeekNum(num)}
+              neonColorMode={neonColorMode}
+            />
+          </div>
         )}
 
         {/* Views */}
-        <main className="pt-1">
+        <main className="relative z-10 pt-1">
           {currentView === 'week' && (
             <WeeklyScheduleView
               week={activeWeek}
@@ -279,6 +281,7 @@ export default function App() {
           {currentView === 'roadmap' && (
             <MasterRoadmapView
               weeks={store.weeks}
+              neonColorMode={neonColorMode}
               onSelectWeek={(num) => {
                 setActiveWeekNum(num);
                 setCurrentView('week');

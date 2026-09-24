@@ -95,17 +95,19 @@ export const LaserBorderCard: React.FC<LaserBorderCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group ${wrapperClass} ${className}`}
+      className={`group/lasercard ${wrapperClass} ${className}`}
     >
-      {/* 360 Derece Sürekli Dönen Çoklu Şerit Lazer */}
-      <div
-        className={`absolute -inset-[300%] ${speedClass} pointer-events-none transition-opacity duration-300 ${
-          active ? 'opacity-100' : 'opacity-50 group-hover:opacity-100'
-        }`}
-        style={{
-          background: laserGradient,
-        }}
-      />
+      {/* 360 Derece Sürekli Dönen Çoklu Şerit Lazer (Sadece lazer ışığını kırpan maskeli katman) */}
+      <div className="laser-mask">
+        <div
+          className={`absolute -inset-[300%] ${speedClass} pointer-events-none transition-opacity duration-300 ${
+            active ? 'opacity-100' : 'opacity-50 group-hover/lasercard:opacity-100'
+          }`}
+          style={{
+            background: laserGradient,
+          }}
+        />
+      </div>
 
       {/* Kart İçerik Kapsayıcısı */}
       <div className={`${contentClass} ${innerClassName}`}>

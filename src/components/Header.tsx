@@ -1,18 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Download, 
   Upload, 
   Printer, 
   RotateCcw, 
-  LayoutGrid,
-  CalendarDays,
-  FolderCheck,
-  CheckCircle2,
-  Lock,
-  ShieldCheck,
-  LogOut,
-  Sparkles,
-  Check
+  LayoutGrid, 
+  CalendarDays, 
+  FolderCheck, 
+  CheckCircle2, 
+  Lock, 
+  ShieldCheck, 
+  LogOut, 
+  Sparkles, 
+  Check 
 } from 'lucide-react';
 import { ProgramStore } from '../types/schedule';
 
@@ -50,22 +51,67 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectNeonMode,
 }) => {
   const [showColorMenu, setShowColorMenu] = useState(false);
-  const colorMenuRef = useRef<HTMLDivElement>(null);
+  const colorButtonRef = useRef<HTMLButtonElement>(null);
+  const dropdownMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
 
-  // Close color menu on click outside
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (colorMenuRef.current && !colorMenuRef.current.contains(e.target as Node)) {
-        setShowColorMenu(false);
+  // Update dropdown position relative to button
+  const updateDropdownPosition = () => {
+    if (colorButtonRef.current) {
+      const rect = colorButtonRef.current.getBoundingClientRect();
+      // Position aligned to right edge of button or left edge if tight
+      const dropdownWidth = 210;
+      let left = rect.right - dropdownWidth;
+      if (left < 10) left = 10;
+      if (left + dropdownWidth > window.innerWidth - 10) {
+        left = window.innerWidth - dropdownWidth - 10;
       }
-    };
-    if (showColorMenu) {
-      document.addEventListener('mousedown', handleOutsideClick);
+      setDropdownPos({
+        top: rect.bottom + window.scrollY + 8,
+        left: left + window.scrollX,
+      });
     }
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
+  };
+
+  // Close color menu on click outside or escape key
+  useEffect(() => {
+    if (showColorMenu) {
+      updateDropdownPosition();
+
+      const handleOutsideClick = (e: MouseEvent) => {
+        if (
+          colorButtonRef.current &&
+          !colorButtonRef.current.contains(e.target as Node) &&
+          dropdownMenuRef.current &&
+          !dropdownMenuRef.current.contains(e.target as Node)
+        ) {
+          setShowColorMenu(false);
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setShowColorMenu(false);
+        }
+      };
+
+      const handleScrollOrResize = () => {
+        updateDropdownPosition();
+      };
+
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('resize', handleScrollOrResize);
+      window.addEventListener('scroll', handleScrollOrResize, true);
+
+      return () => {
+        document.removeEventListener('mousedown', handleOutsideClick);
+        document.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('resize', handleScrollOrResize);
+        window.removeEventListener('scroll', handleScrollOrResize, true);
+      };
+    }
   }, [showColorMenu]);
 
   // Compute stats
@@ -84,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
   });
 
   return (
-    <header className="relative z-40">
+    <header className="relative z-50">
       <LaserBorderCard
         neonColorMode={neonColorMode as ('blue' | 'green' | 'off')}
         speed="slow"
@@ -243,8 +289,9 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="h-5 w-px bg-sky-900/50 hidden sm:block" />
 
           {/* Siber Atmosfer & Renk Seçici Butonu */}
-          <div className="relative z-50" ref={colorMenuRef}>
+          <div>
             <button
+              ref={colorButtonRef}
               onClick={() => setShowColorMenu(!showColorMenu)}
               title="Siber atmosfer temasını değiştir veya kapat"
               className={`group inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
@@ -267,68 +314,79 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </button>
 
-            {/* Dropdown Menu (Guaranteed on top of all elements) */}
-            {showColorMenu && (
-              <div className="absolute right-0 top-full mt-2 w-52 bg-[#090f20] border-2 border-cyan-400/80 rounded-2xl p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.95)] z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1.5">
-                <div className="px-2.5 py-1 text-[10px] font-bold text-cyan-300 uppercase tracking-wider border-b border-sky-800/60 mb-1 flex items-center justify-between">
-                  <span>Siber Atmosfer</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                </div>
-
-                <button
-                  onClick={() => {
-                    onSelectNeonMode?.('blue');
-                    setShowColorMenu(false);
+            {/* Dropdown Menu (React Portal - Directly mounted to document.body) */}
+            {showColorMenu && typeof document !== 'undefined' &&
+              createPortal(
+                <div
+                  ref={dropdownMenuRef}
+                  style={{
+                    position: 'absolute',
+                    top: `${dropdownPos.top}px`,
+                    left: `${dropdownPos.left}px`,
+                    zIndex: 999999,
                   }}
-                  className={`w-full flex items-center justify-between px-2.5 py-2 text-xs rounded-xl font-medium transition-all cursor-pointer ${
-                    neonColorMode === 'blue'
-                      ? 'bg-sky-950 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]'
-                      : 'text-sky-200 hover:bg-sky-950/60 hover:text-white'
-                  }`}
+                  className="w-52 bg-[#090f20] border-2 border-cyan-400/80 rounded-2xl p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.95)] animate-in fade-in zoom-in-95 duration-150 space-y-1.5 backdrop-blur-2xl"
                 >
-                  <span className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
-                    <span className="font-semibold">Elektrik Mavisi</span>
-                  </span>
-                  {neonColorMode === 'blue' && <Check className="w-3.5 h-3.5 text-cyan-400" />}
-                </button>
+                  <div className="px-2.5 py-1 text-[10px] font-bold text-cyan-300 uppercase tracking-wider border-b border-sky-800/60 mb-1 flex items-center justify-between">
+                    <span>Siber Atmosfer</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                  </div>
 
-                <button
-                  onClick={() => {
-                    onSelectNeonMode?.('green');
-                    setShowColorMenu(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-2 text-xs rounded-xl font-medium transition-all cursor-pointer ${
-                    neonColorMode === 'green'
-                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/50 shadow-[0_0_10px_rgba(0,255,157,0.2)]'
-                      : 'text-sky-200 hover:bg-sky-950/60 hover:text-white'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#00ff9d]" />
-                    <span className="font-semibold">Matrix Yeşili</span>
-                  </span>
-                  {neonColorMode === 'green' && <Check className="w-3.5 h-3.5 text-emerald-400" />}
-                </button>
-
-                <div className="border-t border-sky-950/80 pt-1">
                   <button
                     onClick={() => {
-                      onSelectNeonMode?.('off');
+                      onSelectNeonMode?.('blue');
                       setShowColorMenu(false);
                     }}
-                    className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-xl font-medium transition-all cursor-pointer ${
-                      neonColorMode === 'off'
-                        ? 'bg-red-950/60 text-red-300 border border-red-500/40'
-                        : 'text-sky-400/70 hover:bg-sky-950/40 hover:text-red-300'
+                    className={`w-full flex items-center justify-between px-2.5 py-2 text-xs rounded-xl font-medium transition-all cursor-pointer ${
+                      neonColorMode === 'blue'
+                        ? 'bg-sky-950 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]'
+                        : 'text-sky-200 hover:bg-sky-950/60 hover:text-white'
                     }`}
                   >
-                    <span>Kapat</span>
-                    {neonColorMode === 'off' && <Check className="w-3.5 h-3.5 text-red-400" />}
+                    <span className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+                      <span className="font-semibold">Elektrik Mavisi</span>
+                    </span>
+                    {neonColorMode === 'blue' && <Check className="w-3.5 h-3.5 text-cyan-400" />}
                   </button>
-                </div>
-              </div>
-            )}
+
+                  <button
+                    onClick={() => {
+                      onSelectNeonMode?.('green');
+                      setShowColorMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-2.5 py-2 text-xs rounded-xl font-medium transition-all cursor-pointer ${
+                      neonColorMode === 'green'
+                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/50 shadow-[0_0_10px_rgba(0,255,157,0.2)]'
+                        : 'text-sky-200 hover:bg-sky-950/60 hover:text-white'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#00ff9d]" />
+                      <span className="font-semibold">Matrix Yeşili</span>
+                    </span>
+                    {neonColorMode === 'green' && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                  </button>
+
+                  <div className="border-t border-sky-950/80 pt-1">
+                    <button
+                      onClick={() => {
+                        onSelectNeonMode?.('off');
+                        setShowColorMenu(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-xl font-medium transition-all cursor-pointer ${
+                        neonColorMode === 'off'
+                          ? 'bg-red-950/60 text-red-300 border border-red-500/40'
+                          : 'text-sky-400/70 hover:bg-sky-950/40 hover:text-red-300'
+                      }`}
+                    >
+                      <span>Kapat</span>
+                      {neonColorMode === 'off' && <Check className="w-3.5 h-3.5 text-red-400" />}
+                    </button>
+                  </div>
+                </div>,
+                document.body
+              )}
           </div>
 
           {/* Export / Import / Reset with Hover Animations */}
@@ -370,6 +428,7 @@ export const Header: React.FC<HeaderProps> = ({
               </>
             )}
           </div>
+        </div>
         </div>
       </LaserBorderCard>
     </header>

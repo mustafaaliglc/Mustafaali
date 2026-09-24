@@ -5,13 +5,19 @@ import {
   ExternalLink,
   Target,
   Sparkles,
-  FolderCheck
+  FolderCheck,
+  CheckCircle2,
+  Clock,
+  Layers,
+  BookOpen
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
+import { LaserBorderCard } from './LaserBorderCard';
 
 interface MasterRoadmapViewProps {
   weeks: WeekPlan[];
   onSelectWeek: (weekNum: number) => void;
+  neonColorMode?: 'blue' | 'green' | 'off';
 }
 
 // Google Drive SVG Icon
@@ -29,9 +35,29 @@ const GoogleDriveIcon = () => (
 export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
   weeks,
   onSelectWeek,
+  neonColorMode = 'blue',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'filled' | 'drive'>('all');
+
+  // Compute summary stats
+  const totalWeeks = weeks.length;
+  const driveConnectedCount = weeks.filter((w) => !!w.driveFolderUrl).length;
+  let totalItems = 0;
+  let completedItems = 0;
+  const tagCounts: Record<string, number> = {};
+
+  weeks.forEach((w) => {
+    (w.items || []).forEach((item) => {
+      totalItems++;
+      if (item.isCompleted) completedItems++;
+      const tag = item.tag || 'Genel';
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
+  });
+
+  // Estimated hours: 30 weeks x 4 hours/week = 120 hours
+  const totalHours = totalWeeks * 4;
 
   // Filter weeks
   const filteredWeeks = weeks.filter((week) => {
@@ -42,7 +68,6 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
     const itemMatch = (week.items || []).some((i) => (i.text || '').toLowerCase().includes(q));
 
     const matchesSearch = !q || titleMatch || topicMatch || contentMatch || itemMatch;
-
     const filledCount = (week.items || []).filter((i) => i.text && i.text.trim() !== '').length;
 
     if (filterMode === 'filled' && filledCount === 0) return false;
@@ -54,8 +79,13 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
   return (
     <div className="space-y-6 pb-20">
       
-      {/* Top Banner */}
-      <div className="bg-[#080d1a]/95 backdrop-blur-xl border border-sky-900/50 rounded-2xl p-6 shadow-2xl shadow-black/80 transition-all duration-300 hover:border-sky-500/50">
+      {/* Top Banner with Full Rotating Laser Border */}
+      <LaserBorderCard
+        neonColorMode={neonColorMode}
+        speed="normal"
+        active={true}
+        innerClassName="p-5 sm:p-6 backdrop-blur-xl border border-sky-900/60"
+      >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -95,7 +125,7 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
                     : 'text-sky-300 hover:text-white hover:bg-sky-900/40'
                 }`}
               >
-                Tümü (30)
+                Tümü ({totalWeeks})
               </button>
               <button
                 onClick={() => setFilterMode('drive')}
@@ -105,7 +135,7 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
                     : 'text-sky-300 hover:text-white hover:bg-sky-900/40'
                 }`}
               >
-                Drive Olanlar
+                Drive ({driveConnectedCount})
               </button>
               <button
                 onClick={() => setFilterMode('filled')}
@@ -120,18 +150,67 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 30 Weeks Grid with Electric Blue cards and hover lift */}
+        {/* Summary Visual Metrics Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5 pt-4 border-t border-sky-950/70">
+          <div className="bg-[#070d1c]/80 border border-sky-800/40 rounded-xl p-2.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">
+              <Clock className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white">{totalHours} Saat</div>
+              <div className="text-[10px] text-sky-400/80">Toplam Müfredat Süresi</div>
+            </div>
+          </div>
+
+          <div className="bg-[#070d1c]/80 border border-sky-800/40 rounded-xl p-2.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-sky-950/80 text-sky-400 border border-sky-500/30">
+              <Layers className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white">{totalItems} Madde</div>
+              <div className="text-[10px] text-sky-400/80">Program Kazanımı</div>
+            </div>
+          </div>
+
+          <div className="bg-[#070d1c]/80 border border-sky-800/40 rounded-xl p-2.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
+              <FolderCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white">{driveConnectedCount} / {totalWeeks}</div>
+              <div className="text-[10px] text-sky-400/80">Drive Bağlantısı</div>
+            </div>
+          </div>
+
+          <div className="bg-[#070d1c]/80 border border-sky-800/40 rounded-xl p-2.5 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-teal-950/80 text-teal-400 border border-teal-500/30">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white">
+                {totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0}%
+              </div>
+              <div className="text-[10px] text-sky-400/80">Tamamlanma Oranı</div>
+            </div>
+          </div>
+        </div>
+      </LaserBorderCard>
+
+      {/* 30 Weeks Grid with Full Laser Rotating Border Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredWeeks.map((week) => {
           const items = week.items || [];
 
           return (
-            <div
+            <LaserBorderCard
               key={week.weekNumber}
+              neonColorMode={neonColorMode}
+              speed="normal"
+              active={false}
               onClick={() => onSelectWeek(week.weekNumber)}
-              className="group bg-[#080d1a]/90 hover:bg-[#0b1328] border border-sky-900/45 hover:border-cyan-400/80 rounded-2xl p-4 shadow-xl shadow-black/70 hover:shadow-[0_0_25px_rgba(0,210,255,0.25)] transition-all duration-300 cursor-pointer flex flex-col justify-between hover-lift hover:scale-[1.02]"
+              className="cursor-pointer hover-lift transition-transform duration-200"
+              innerClassName="p-4 flex flex-col justify-between h-full bg-[#080d1a]/95 hover:bg-[#0b1328] transition-colors"
             >
               <div>
                 {/* Header */}
@@ -202,7 +281,7 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
                 <span>Haftayı Düzenle</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
               </div>
-            </div>
+            </LaserBorderCard>
           );
         })}
       </div>

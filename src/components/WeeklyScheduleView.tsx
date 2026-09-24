@@ -373,7 +373,6 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
               </div>
             </div>
           )}
-          </div>
         </div>
       </LaserBorderCard>
 

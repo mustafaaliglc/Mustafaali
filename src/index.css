@@ -134,7 +134,6 @@ html, body {
   position: relative;
   border-radius: 1rem;
   padding: 2px;
-  overflow: hidden;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
 }
 
@@ -142,7 +141,16 @@ html, body {
   position: relative;
   border-radius: 0.85rem;
   padding: 1.5px;
+}
+
+/* Lazer Işığını Kart Şekline Göre Kırpan Katman (İçerikteki Açılır Menüleri Kesmez) */
+.laser-mask {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .laser-card-content {
