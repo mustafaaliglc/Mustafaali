@@ -1,0 +1,6 @@
+{
+  "name": "Mustafa Ali Güleç - 30 Haftalık Program",
+  "description": "Mustafa Ali Güleç için 30 haftalık özelleştirilebilir çalışma, ders ve saat bilgilendirmeli aktivite takip programı.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
