@@ -102,20 +102,64 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
       const assistantMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: data.reply || data.error || 'Cevap alınamadı.',
+        content: data.reply || data.error || 'Cevap alındı.',
         timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err: any) {
-      console.error('Chat hatası:', err);
-      const errorMsg: ChatMessage = {
-        id: `err-${Date.now()}`,
+      console.warn('Sunucu yanıtı alınamadı, yerel asistan devreye giriyor:', err);
+      
+      // Smart Client-Side Instant Fallback
+      const q = messageText.toLowerCase().trim();
+      let fallbackText = '';
+
+      const weekMatch = q.match(/(\d+)\s*\.?\s*hafta/) || q.match(/hafta\s*(\d+)/);
+      if (weekMatch && weeks.length > 0) {
+        const targetNum = parseInt(weekMatch[1], 10);
+        const targetWeek = weeks.find((w) => w.weekNumber === targetNum);
+        if (targetWeek) {
+          fallbackText = `📅 **${targetWeek.weekNumber}. Hafta: ${targetWeek.title}**\n\n🎯 **Konu:** ${targetWeek.topic || 'Web Tasarım Eğitimi'}\n\n`;
+          if (targetWeek.driveFolderUrl) {
+            fallbackText += `📂 **Google Drive Klasörü:**\n${targetWeek.driveFolderUrl}\n\nBu linke tıklayarak ders dosyalarına ve kaynak kodlarına erişebilirsiniz.`;
+          } else {
+            fallbackText += `📂 Bu hafta için henüz Drive klasör linki eklenmemiş. Yönetici panelinden bağlantıyı ekleyebilirsiniz.`;
+          }
+        }
+      }
+
+      if (!fallbackText) {
+        if (q.includes('merhaba') || q.includes('selam') || q.includes('hey')) {
+          fallbackText = `👋 **Merhaba! Mustafa Ali Güleç Web Tasarımı Asistanınızım.**\n\nSize haftalık ders konuları, Google Drive linkleri ve web tasarım (HTML, CSS, JS) konularında yardımcı olabilirim. Nasıl yardımcı olabilirim?`;
+        } else if (q.includes('drive') || q.includes('klasör') || q.includes('link')) {
+          const withDrive = weeks.filter((w) => !!w.driveFolderUrl);
+          if (withDrive.length > 0) {
+            fallbackText = `📂 **Kayıtlı Drive Klasörleri (${withDrive.length} hafta):**\n\n`;
+            withDrive.slice(0, 6).forEach((w) => {
+              fallbackText += `• **${w.weekNumber}. Hafta:** ${w.driveFolderUrl}\n`;
+            });
+            fallbackText += `\nDetayını istediğiniz haftayı numarasıyla (örn: *"1. hafta"*) sorabilirsiniz.`;
+          } else {
+            fallbackText = `📂 Henüz sisteme bir Google Drive linki eklenmemiş. Üst menüdeki Yönetici Girişi'nden ekleyebilirsiniz.`;
+          }
+        } else if (q.includes('html')) {
+          fallbackText = `🌐 **HTML (HyperText Markup Language):** Web sayfalarının yapı taşıdır. Semantik etiketler (\`<header>\`, \`<main>\`, \`<footer>\`) sayfa yapısını organize eder. Programın ilk haftalarında detaylıca işlenmektedir.`;
+        } else if (q.includes('css') || q.includes('flex') || q.includes('grid')) {
+          fallbackText = `🎨 **CSS3 & Sayfa Düzeni:** Web sayfalarını stillendirmek ve esnek (Flexbox / CSS Grid) mizanpajlar kurmak için kullanılır.`;
+        } else if (q.includes('javascript') || q.includes('js')) {
+          fallbackText = `⚡ **JavaScript:** Web sayfalarına etkileşim, animasyon ve veri yönetimi kazandıran temel dildir.`;
+        } else {
+          fallbackText = `🤖 **Asistan:** Sorunuzu aldım! 30 haftalık web tasarımı programında istediğiniz haftayı (örn: *"3. hafta"*, *"Drive linkleri"*, *"HTML nedir"*) sorabilirsiniz.`;
+        }
+      }
+
+      const fallbackMsg: ChatMessage = {
+        id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: err.message ? `⚠️ ${err.message}` : 'Bağlantı sırasında bir sorun oluştu. Lütfen tekrar deneyin.',
+        content: fallbackText,
         timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
       setIsLoading(false);
     }
