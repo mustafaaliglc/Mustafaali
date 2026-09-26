@@ -57,9 +57,8 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-sky-200 mb-1.5 flex items-center justify-between">
-              <span>Yönetici PIN / Şifre</span>
-              <span className="text-[10px] text-cyan-400/80">(Varsayılan: 1234)</span>
+            <label className="block text-xs font-semibold text-sky-200 mb-1.5">
+              Yönetici PIN / Şifre
             </label>
             <div className="relative">
               <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400" />
