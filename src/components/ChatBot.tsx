@@ -94,15 +94,15 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Yanıt alınamadı');
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok && !data.reply) {
+        throw new Error(data.error || 'Yanıt alınamadı');
       }
 
-      const data = await response.json();
       const assistantMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: data.reply || 'Cevap alınamadı.',
+        content: data.reply || data.error || 'Cevap alınamadı.',
         timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       };
 
@@ -112,7 +112,7 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
       const errorMsg: ChatMessage = {
         id: `err-${Date.now()}`,
         role: 'assistant',
-        content: 'Bağlantı sırasında bir sorun oluştu. Lütfen tekrar deneyin.',
+        content: err.message ? `⚠️ ${err.message}` : 'Bağlantı sırasında bir sorun oluştu. Lütfen tekrar deneyin.',
         timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, errorMsg]);

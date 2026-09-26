@@ -66,15 +66,24 @@ Cevaplama Kuralları:
 - Cevaplarını gereksiz uzatmadan, anlaşılır ve şık tut.`;
 
     // Map conversation history to contents for Gemini
-    // Format: contents array of { role: 'user' | 'model', parts: [{ text }] }
-    const contents = messages.map((m: { role: string; content: string }) => ({
+    // Ensure contents start with 'user' role (Gemini requires the first turn to be 'user')
+    let formattedContents = messages.map((m: { role: string; content: string }) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     }));
 
+    // Trim any leading 'model' messages (e.g., initial welcome greeting)
+    while (formattedContents.length > 0 && formattedContents[0].role === 'model') {
+      formattedContents.shift();
+    }
+
+    if (formattedContents.length === 0) {
+      return res.status(400).json({ error: 'Kullanıcı mesajı bulunamadı.' });
+    }
+
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: contents,
+      model: 'gemini-3.8-flash',
+      contents: formattedContents,
       config: {
         systemInstruction,
         temperature: 0.7,
@@ -85,6 +94,28 @@ Cevaplama Kuralları:
     return res.json({ reply: replyText });
   } catch (error: any) {
     console.error('Gemini API Hatası:', error);
+
+    // Fallback: If Gemini API fails or key is missing, provide a smart local response from curriculum context
+    const { messages, weeksContext, activeWeekNum } = req.body || {};
+    const lastUserMessage = (messages && messages.slice().reverse().find((m: any) => m.role === 'user')?.content) || '';
+    const userQueryLower = lastUserMessage.toLowerCase();
+
+    // Check if user is asking for a specific week or drive folder
+    const weekMatch = userQueryLower.match(/(\d+)\s*\.?\s*hafta/);
+    if (weekMatch && weeksContext && Array.isArray(weeksContext)) {
+      const requestedWeekNum = parseInt(weekMatch[1], 10);
+      const targetWeek = weeksContext.find((w: any) => w.weekNumber === requestedWeekNum);
+      if (targetWeek) {
+        let reply = `📅 **${targetWeek.weekNumber}. Hafta: ${targetWeek.title}**\n\n🎯 **Konu:** ${targetWeek.topic || 'Belirtilmedi'}\n\n`;
+        if (targetWeek.driveFolderUrl) {
+          reply += `📂 **Google Drive Klasörü:**\n${targetWeek.driveFolderUrl}\n\nBu linke tıklayarak ders kayıtlarına ve kaynak kodlarına erişebilirsiniz!`;
+        } else {
+          reply += `📂 Bu hafta için henüz Google Drive linki eklenmemiş. Yönetici panelinden link ekleyebilirsiniz.`;
+        }
+        return res.json({ reply });
+      }
+    }
+
     return res.status(500).json({
       error: error.message || 'Gemini servisiyle iletişim kurulurken bir hata oluştu.',
     });
