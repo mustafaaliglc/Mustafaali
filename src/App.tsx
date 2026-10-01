@@ -27,7 +27,7 @@ export default function App() {
   const [neonColorMode, setNeonColorMode] = useState<NeonColorMode | 'off'>(() => {
     try {
       const saved = localStorage.getItem('mag_neon_color_mode');
-      if (saved === 'blue' || saved === 'green' || saved === 'off') {
+      if (saved === 'blue' || saved === 'off') {
         return saved;
       }
       return 'blue';
@@ -37,10 +37,7 @@ export default function App() {
   });
 
   const handleCycleNeonMode = () => {
-    const sequence: (NeonColorMode | 'off')[] = ['blue', 'green', 'off'];
-    const currentIndex = sequence.indexOf(neonColorMode);
-    const nextIndex = (currentIndex + 1) % sequence.length;
-    const nextMode = sequence[nextIndex];
+    const nextMode = neonColorMode === 'blue' ? 'off' : 'blue';
     setNeonColorMode(nextMode);
     try {
       localStorage.setItem('mag_neon_color_mode', nextMode);
@@ -48,9 +45,10 @@ export default function App() {
   };
 
   const handleSelectNeonMode = (mode: NeonColorMode | 'off') => {
-    setNeonColorMode(mode);
+    const finalMode = mode === 'off' ? 'off' : 'blue';
+    setNeonColorMode(finalMode);
     try {
-      localStorage.setItem('mag_neon_color_mode', mode);
+      localStorage.setItem('mag_neon_color_mode', finalMode);
     } catch {}
   };
 
@@ -215,15 +213,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#04060c] text-slate-100 font-sans flex flex-col antialiased selection:bg-cyan-500 selection:text-black relative overflow-x-hidden">
       
-      {/* Deep Obsidian Background with Electric Blue Radial Glow (Never flashes white) */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#0b1a30] via-[#050b17] to-[#04060c] -z-20 pointer-events-none" />
+      {/* Clean Dark Obsidian Background */}
+      <div className="fixed inset-0 bg-[#04060c] -z-20 pointer-events-none" />
 
-      {/* Interactive Neon Particle & Background Wave Effect */}
+      {/* Interactive Cursor Spotlight Light (Follows mouse cursor smoothly) */}
       {neonColorMode !== 'off' && <NeonBackgroundCanvas colorMode={neonColorMode} />}
-
-      {/* Floating Ambient Glowing Electric Blue & Cyan Orbs */}
-      <div className="fixed top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-500/15 rounded-full blur-[140px] pointer-events-none -z-10 animate-float-slow" />
-      <div className="fixed bottom-[-5%] right-[10%] w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-[150px] pointer-events-none -z-10 animate-float-reverse" />
 
       {/* Opening Intro Animation */}
       {showIntro && (
