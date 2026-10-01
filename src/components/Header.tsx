@@ -20,8 +20,8 @@ import { LaserBorderCard } from './LaserBorderCard';
 
 interface HeaderProps {
   store: ProgramStore;
-  currentView: 'week' | 'roadmap' | 'print' | 'admin';
-  setCurrentView: (view: 'week' | 'roadmap' | 'print' | 'admin') => void;
+  currentView: 'week' | 'roadmap' | 'print' | 'admin' | 'poster';
+  setCurrentView: (view: 'week' | 'roadmap' | 'print' | 'admin' | 'poster') => void;
   onExport: () => void;
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onReset: () => void;
@@ -172,6 +172,20 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Printer className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-125 group-hover:text-cyan-300 group-hover:-rotate-12" />
               <span className="transition-colors group-hover:text-cyan-200">Yazdır</span>
+            </button>
+
+            {/* AFİŞ BUTONU */}
+            <button
+              onClick={() => setCurrentView('poster')}
+              className={`group relative overflow-hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
+                currentView === 'poster'
+                  ? 'btn-electric text-white shadow-[0_0_20px_rgba(0,210,255,0.5)]'
+                  : 'text-sky-300 hover:text-white hover:bg-sky-900/50 hover:border-cyan-400 hover:shadow-[0_0_18px_rgba(0,210,255,0.35)] hover:-translate-y-0.5 active:scale-95'
+              }`}
+              title="Program Afişini Görüntüle & İndir"
+            >
+              <Sparkles className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-125 group-hover:text-cyan-300 group-hover:rotate-12" />
+              <span className="transition-colors group-hover:text-cyan-200">Afiş</span>
             </button>
 
             {/* Admin Panel Tab */}

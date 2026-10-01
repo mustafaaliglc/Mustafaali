@@ -19,11 +19,12 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { NeonBackgroundCanvas, NeonColorMode } from './components/NeonBackgroundCanvas';
+import { PosterView } from './components/PosterView';
 
 export default function App() {
   const [store, setStore] = useState<ProgramStore>(() => loadProgramFromStorage());
   const [activeWeekNum, setActiveWeekNum] = useState<number>(1);
-  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'print' | 'admin'>('week');
+  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'print' | 'admin' | 'poster'>('week');
   const [neonColorMode, setNeonColorMode] = useState<NeonColorMode | 'off'>(() => {
     try {
       const saved = localStorage.getItem('mag_neon_color_mode');
@@ -288,6 +289,13 @@ export default function App() {
               store={store}
               activeWeekNum={activeWeekNum}
               onBack={() => setCurrentView('week')}
+            />
+          )}
+
+          {currentView === 'poster' && (
+            <PosterView
+              onBack={() => setCurrentView('week')}
+              neonColorMode={neonColorMode}
             />
           )}
 
