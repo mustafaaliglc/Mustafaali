@@ -1,6 +1,7 @@
 import { ProgramStore, WeekPlan, ProgramItem } from '../types/schedule';
 
 export const WEEK_1_DRIVE_URL = 'https://drive.google.com/drive/folders/1IPqE7_sRv7mMc5hRAhJifFiC42VtB-K1?hl=tr';
+export const WEEK_2_DRIVE_URL = 'https://drive.google.com/drive/folders/1MY7fXtKi7LvN9KKsEzZeYwjRhXVHF1_I?hl=tr';
 
 export const DEFAULT_TAGS = [
   'HTML & CSS',
@@ -37,12 +38,13 @@ export function generateDefaultItems(weekNumber: number): ProgramItem[] {
 
 export function generateEmptyWeek(weekNumber: number): WeekPlan {
   const isWeek1 = weekNumber === 1;
+  const isWeek2 = weekNumber === 2;
   return {
     weekNumber,
     title: `${weekNumber}. Hafta`,
-    topic: isWeek1 ? 'Web Tasarımına Giriş & HTML/CSS' : '',
-    driveFolderUrl: isWeek1 ? WEEK_1_DRIVE_URL : '',
-    driveTitle: isWeek1 ? '1. Hafta Web Tasarımı Drive Klasörü' : '',
+    topic: isWeek1 ? 'Web Tasarımına Giriş & HTML/CSS' : isWeek2 ? 'Temel HTML Yapıları & Afiş Tasarımı' : '',
+    driveFolderUrl: isWeek1 ? WEEK_1_DRIVE_URL : isWeek2 ? WEEK_2_DRIVE_URL : '',
+    driveTitle: isWeek1 ? '1. Hafta Web Tasarımı Drive Klasörü' : isWeek2 ? '2. Hafta Drive Klasörü (Afiş Dahil)' : '',
     content: '',
     items: generateDefaultItems(weekNumber),
   };
@@ -74,6 +76,10 @@ export function loadProgramFromStorage(): ProgramStore {
         if (!parsed.weeks[0].driveFolderUrl) {
           parsed.weeks[0].driveFolderUrl = WEEK_1_DRIVE_URL;
           parsed.weeks[0].driveTitle = '1. Hafta Web Tasarımı Drive Klasörü';
+        }
+        if (!parsed.weeks[1].driveFolderUrl) {
+          parsed.weeks[1].driveFolderUrl = WEEK_2_DRIVE_URL;
+          parsed.weeks[1].driveTitle = '2. Hafta Drive Klasörü (Afiş Dahil)';
         }
         // Ensure items array exists on all weeks
         parsed.weeks.forEach((w: WeekPlan, idx: number) => {

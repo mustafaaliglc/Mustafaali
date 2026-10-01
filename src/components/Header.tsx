@@ -79,11 +79,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3.5">
           <div className="relative group">
             {/* Pulsing neon electric blue halo */}
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-cyan-400 opacity-70 group-hover:opacity-100 blur-md transition-all duration-300 animate-pulse-neon" />
-            <div className="relative w-11 h-11 rounded-xl bg-[#070b16] text-white font-black text-base flex flex-col items-center justify-center shadow-lg shrink-0 tracking-widest border border-cyan-400/40 transition-transform duration-200 group-hover:scale-105">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-cyan-400">
-                MAG
-              </span>
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-sky-500 via-blue-600 to-cyan-400 opacity-70 group-hover:opacity-100 blur-md transition-all duration-300 animate-pulse-neon" />
+            <div className="relative w-11 h-11 rounded-full overflow-hidden shadow-lg shrink-0 border border-cyan-400/40 transition-transform duration-200 group-hover:scale-105">
+              <img
+                src="/okul-logo.png"
+                alt="Okul Logosu"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
