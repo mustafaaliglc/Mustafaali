@@ -20,6 +20,7 @@ import { LaserBorderCard } from './LaserBorderCard';
 
 interface WeeklyScheduleViewProps {
   week: WeekPlan;
+  totalWeeks?: number;
   onUpdateWeek: (updatedWeek: WeekPlan) => void;
   onOpenCopyModal: () => void;
   isAdmin: boolean;
@@ -41,6 +42,7 @@ const GoogleDriveIcon = () => (
 
 export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
   week,
+  totalWeeks = 38,
   onUpdateWeek,
   onOpenCopyModal,
   isAdmin,
@@ -143,7 +145,7 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/80 px-2.5 py-0.5 rounded-md border border-cyan-500/40 shadow-[0_0_10px_rgba(0,210,255,0.15)]">
-                {week.weekNumber}. Hafta / 30 Hafta
+                {week.weekNumber}. Hafta / {totalWeeks} Hafta
               </span>
               <span className="text-xs text-sky-800">·</span>
               <span className="text-xs font-semibold text-sky-300">

@@ -85,7 +85,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
           <div className="p-3 bg-[#060b16] border border-sky-900/50 rounded-xl text-[11px] text-sky-300/80 leading-relaxed">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 inline mr-1" />
-            Admin paneline giriş yaptıktan sonra tüm 30 haftanın Google Drive klasör linklerini ekleyebilir, güncelleyebilir ve şifrenizi değiştirebilirsiniz.
+            Admin paneline giriş yaptıktan sonra tüm haftaların Google Drive klasör linklerini ekleyebilir, güncelleyebilir ve şifrenizi değiştirebilirsiniz.
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2">

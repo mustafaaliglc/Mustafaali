@@ -6,7 +6,7 @@ export interface ProgramItem {
 }
 
 export interface WeekPlan {
-  weekNumber: number;      // 1 - 30
+  weekNumber: number;      // 1 - 38
   title: string;           // e.g. "1. Hafta"
   topic?: string;          // e.g. "Web Tasarımına Giriş & HTML/CSS"
   driveFolderUrl?: string; // Google Drive klasör bağlantısı

@@ -118,11 +118,12 @@ function generateSmartFallbackResponse(
 
   // 6. General Curriculum Overview
   if (q.includes('program') || q.includes('müfredat') || q.includes('kaç hafta') || q.includes('özet')) {
-    return `📚 **Mustafa Ali Güleç - 30 Haftalık Web Tasarımı Programı:**\n\n- **Toplam Hafta:** 30 Hafta\n- **Başlangıç:** HTML5, CSS3, Tipografi ve Temel Tasarım\n- **Orta Seviye:** Flexbox, CSS Grid, Responsive Tasarım, Figma & UI/UX\n- **İleri Seviye:** JavaScript Temelleri, DOM, Modern Web Bileşenleri, Proje Geliştirme\n- **Bitirme:** Portfolyo oluşturma ve canlıya alma.\n\nDetaylı incelemek istediğiniz haftayı belirtebilirsiniz (Örn: *"10. hafta"*).`;
+    const total = weeks.length || 38;
+    return `📚 **Mustafa Ali Güleç - ${total} Haftalık Web Tasarımı Programı:**\n\n- **Toplam Hafta:** ${total} Hafta\n- **Başlangıç:** HTML5, CSS3, Tipografi ve Temel Tasarım\n- **Orta Seviye:** Flexbox, CSS Grid, Responsive Tasarım, Figma & UI/UX\n- **İleri Seviye:** JavaScript Temelleri, DOM, Modern Web Bileşenleri, Proje Geliştirme\n- **Bitirme:** Portfolyo oluşturma ve canlıya alma.\n\nDetaylı incelemek istediğiniz haftayı belirtebilirsiniz (Örn: *"10. hafta"*).`;
   }
 
   // 7. General Fallback
-  return `🤖 **Web Tasarımı Asistanı:**\n\nSorunuzla ilgili size yardımcı olmak için buradayım! 30 haftalık web tasarımı programı hakkında şunları sorabilirsiniz:\n- *"1. hafta dersi ve Drive linki"* \n- *"Flexbox ile CSS Grid arasındaki fark nedir?"*\n- *"Google Drive klasörlerine nasıl erişirim?"*\n- *"Aktif haftanın detayları"*`;
+  return `🤖 **Web Tasarımı Asistanı:**\n\nSorunuzla ilgili size yardımcı olmak için buradayım! ${weeks.length || 38} haftalık web tasarımı programı hakkında şunları sorabilirsiniz:\n- *"1. hafta dersi ve Drive linki"* \n- *"Flexbox ile CSS Grid arasındaki fark nedir?"*\n- *"Google Drive klasörlerine nasıl erişirim?"*\n- *"Aktif haftanın detayları"*`;
 }
 
 // Chat endpoint with Gemini + Smart Fallback
@@ -154,7 +155,8 @@ app.post('/api/chat', async (req, res) => {
           .join('\n');
       }
 
-      const systemInstruction = `Sen Mustafa Ali Güleç'in 30 Haftalık Web Tasarımı Programı'nın özel, samimi, uzman ve yardımsever yapay zeka asistanısın.
+      const total = weeksContext?.length || 38;
+      const systemInstruction = `Sen Mustafa Ali Güleç'in ${total} Haftalık Web Tasarımı Programı'nın özel, samimi, uzman ve yardımsever yapay zeka asistanısın.
 
 Görevin:
 1. Kullanıcıya hangi haftanın Google Drive ders klasörüne veya programına ulaşmak istediğinde yardımcı olmak.
@@ -163,7 +165,7 @@ Görevin:
 4. Kullanıcı hangi haftayı sorarsa o haftanın konularını ve materyallerini özetlemek.
 5. Şu an seçili olan hafta: ${activeWeekNum || 1}. Hafta.
 
-Mevcut 30 Haftalık Program ve Drive Bağlantıları Verisi:
+Mevcut ${total} Haftalık Program ve Drive Bağlantıları Verisi:
 ${contextSummary}
 
 Cevaplama Kuralları:

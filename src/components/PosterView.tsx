@@ -64,12 +64,12 @@ export const PosterView: React.FC<PosterViewProps> = ({ onBack, neonColorMode = 
           <div className="relative group max-w-md w-full rounded-2xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(0,210,255,0.3)] border border-cyan-500/40 transition-transform duration-300 hover:scale-[1.02]">
             <img
               src="/afis.jpg"
-              alt="Mustafa Ali Güleç - 30 Haftalık Web Tasarımı ve Kodlama Programı Afişi"
+              alt="Mustafa Ali Güleç - 38 Haftalık Web Tasarımı ve Kodlama Programı Afişi"
               className="w-full h-auto object-cover block"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
               <span className="text-xs font-semibold text-cyan-300 bg-black/80 px-3 py-1.5 rounded-full border border-cyan-500/40 backdrop-blur-md">
-                Mustafa Ali Güleç • 30 Haftalık Web Tasarımı
+                Mustafa Ali Güleç • 38 Haftalık Web Tasarımı
               </span>
             </div>
           </div>
@@ -85,18 +85,18 @@ export const PosterView: React.FC<PosterViewProps> = ({ onBack, neonColorMode = 
                 Mustafa Ali Güleç
               </h2>
               <p className="text-base font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400">
-                30 Haftalık Web Tasarımı & Kodlama Yolculuğu
+                38 Haftalık Web Tasarımı & Kodlama Yolculuğu
               </p>
             </div>
 
             <p className="text-sm text-slate-300 leading-relaxed">
-              Bu afiş, 30 haftalık web geliştirme eğitim serüveninizi görselleştirmek için özel olarak tasarlandı. HTML5 ve modern CSS temellerinden başlayarak, responsive tasarımlar, Figma arayüzleri, modern JavaScript ve portfolyo projelerine uzanan başarı yol haritasını temsil eder.
+              Bu afiş, 38 haftalık web geliştirme eğitim serüveninizi görselleştirmek için özel olarak tasarlandı. HTML5 ve modern CSS temellerinden başlayarak, responsive tasarımlar, Figma arayüzleri, modern JavaScript ve portfolyo projelerine uzanan başarı yol haritasını temsil eder.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="p-3 rounded-xl bg-[#091124] border border-sky-900/60 shadow-inner">
                 <p className="text-xs text-sky-400 font-medium">Toplam Süre</p>
-                <p className="text-base font-bold text-white mt-0.5">30 Hafta Planı</p>
+                <p className="text-base font-bold text-white mt-0.5">38 Hafta Planı</p>
               </div>
               <div className="p-3 rounded-xl bg-[#091124] border border-sky-900/60 shadow-inner">
                 <p className="text-xs text-cyan-400 font-medium">Drive Entegrasyonu</p>

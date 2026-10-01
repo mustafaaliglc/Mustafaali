@@ -50,34 +50,47 @@ export function generateEmptyWeek(weekNumber: number): WeekPlan {
   };
 }
 
+export const TOTAL_WEEKS = 38;
+
 export function createInitialProgramStore(): ProgramStore {
   const weeks: WeekPlan[] = [];
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 1; i <= TOTAL_WEEKS; i++) {
     weeks.push(generateEmptyWeek(i));
   }
 
   return {
     ownerName: 'Mustafa Ali Güleç',
-    programTitle: '30 Haftalık Web Tasarımı Programı',
-    totalWeeks: 30,
+    programTitle: '38 Haftalık Web Tasarımı Programı',
+    totalWeeks: TOTAL_WEEKS,
     weeks,
     lastUpdated: new Date().toISOString(),
   };
 }
 
-const STORAGE_KEY = 'mustafa_ali_gulec_30_hafta_web_tasarim_v4_dark';
+const STORAGE_KEY = 'mustafa_ali_gulec_38_hafta_web_tasarim_v5_dark';
+const LEGACY_STORAGE_KEY = 'mustafa_ali_gulec_30_hafta_web_tasarim_v4_dark';
 
 export function loadProgramFromStorage(): ProgramStore {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && Array.isArray(parsed.weeks) && parsed.weeks.length === 30) {
+      if (parsed && Array.isArray(parsed.weeks)) {
+        // Migrate to 38 weeks if older version had fewer weeks
+        while (parsed.weeks.length < TOTAL_WEEKS) {
+          parsed.weeks.push(generateEmptyWeek(parsed.weeks.length + 1));
+        }
+
+        parsed.totalWeeks = TOTAL_WEEKS;
+        if (parsed.programTitle && parsed.programTitle.includes('30 Haftalık')) {
+          parsed.programTitle = parsed.programTitle.replace('30 Haftalık', '38 Haftalık');
+        }
+
         if (!parsed.weeks[0].driveFolderUrl) {
           parsed.weeks[0].driveFolderUrl = WEEK_1_DRIVE_URL;
           parsed.weeks[0].driveTitle = '1. Hafta Web Tasarımı Drive Klasörü';
         }
-        if (!parsed.weeks[1].driveFolderUrl) {
+        if (parsed.weeks[1] && !parsed.weeks[1].driveFolderUrl) {
           parsed.weeks[1].driveFolderUrl = WEEK_2_DRIVE_URL;
           parsed.weeks[1].driveTitle = '2. Hafta Drive Klasörü (Afiş Dahil)';
         }
@@ -87,6 +100,8 @@ export function loadProgramFromStorage(): ProgramStore {
             w.items = generateDefaultItems(idx + 1);
           }
         });
+
+        saveProgramToStorage(parsed);
         return parsed;
       }
     }
@@ -103,6 +118,7 @@ export function saveProgramToStorage(store: ProgramStore): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ...store,
+      totalWeeks: TOTAL_WEEKS,
       lastUpdated: new Date().toISOString(),
     }));
   } catch (err) {

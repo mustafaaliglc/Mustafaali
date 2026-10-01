@@ -224,6 +224,7 @@ export default function App() {
       {showIntro && (
         <OpeningAnimation
           ownerName={store.ownerName}
+          programTitle={store.programTitle}
           onComplete={handleIntroComplete}
         />
       )}
@@ -265,6 +266,7 @@ export default function App() {
           {currentView === 'week' && (
             <WeeklyScheduleView
               week={activeWeek}
+              totalWeeks={store.totalWeeks}
               onUpdateWeek={handleUpdateWeek}
               onOpenCopyModal={() => setIsCopyModalOpen(true)}
               isAdmin={isAdmin}

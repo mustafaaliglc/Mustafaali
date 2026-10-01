@@ -42,7 +42,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
   };
 
   const handleNext = () => {
-    if (activeWeekNum < 30) onSelectWeek(activeWeekNum + 1);
+    if (activeWeekNum < weeks.length) onSelectWeek(activeWeekNum + 1);
   };
 
   const scrollLeftStrip = () => {
@@ -119,9 +119,9 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
         {/* Next button */}
         <button
           onClick={handleNext}
-          disabled={activeWeekNum >= 30}
+          disabled={activeWeekNum >= weeks.length}
           className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-            activeWeekNum >= 30
+            activeWeekNum >= weeks.length
               ? 'text-sky-900/40 cursor-not-allowed bg-sky-950/20'
               : 'text-sky-200 hover:text-white bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800/50 hover:border-sky-400 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:-translate-y-0.5 active:scale-95'
           }`}
@@ -131,7 +131,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
         </button>
       </div>
 
-      {/* 30 Week Quick Scroll Strip with Left & Right Arrow controls to ensure 1 & 2 are NEVER hidden */}
+      {/* 38 Week Quick Scroll Strip with Left & Right Arrow controls to ensure 1 & 2 are NEVER hidden */}
       <div className="mt-3 pt-3 border-t border-sky-950/70 flex items-center gap-1">
         
         {/* Quick Scroll to 1. Week & Left nudge */}
@@ -150,7 +150,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* The 30 Week Buttons Strip - Fixed left alignment (NO justify-center!) so weeks 1 and 2 are always reachable! */}
+        {/* The 38 Week Buttons Strip - Fixed left alignment (NO justify-center!) so weeks 1 and 2 are always reachable! */}
         <div
           ref={scrollContainerRef}
           className="flex items-center justify-start gap-1.5 overflow-x-auto py-2 px-2 scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-[#090d1a] scroll-smooth flex-1"

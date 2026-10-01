@@ -36,7 +36,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({
   const initialWelcome: ChatMessage = {
     id: 'welcome',
     role: 'assistant',
-    content: `Merhaba Mustafa Ali! 👋 Ben 30 Haftalık Web Tasarımı programı asistanınım.
+    content: `Merhaba Mustafa Ali! 👋 Ben ${weeks.length || 38} Haftalık Web Tasarımı programı asistanınım.
 
 Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İster hafta numarası ver, ister web tasarımı (HTML, CSS, Figma vb.) konusunda merak ettiğin bir şeyi sor!`,
     timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
@@ -149,7 +149,7 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
         } else if (q.includes('javascript') || q.includes('js')) {
           fallbackText = `⚡ **JavaScript:** Web sayfalarına etkileşim, animasyon ve veri yönetimi kazandıran temel dildir.`;
         } else {
-          fallbackText = `🤖 **Asistan:** Sorunuzu aldım! 30 haftalık web tasarımı programında istediğiniz haftayı (örn: *"3. hafta"*, *"Drive linkleri"*, *"HTML nedir"*) sorabilirsiniz.`;
+          fallbackText = `🤖 **Asistan:** Sorunuzu aldım! ${weeks.length} haftalık web tasarımı programında istediğiniz haftayı (örn: *"3. hafta"*, *"Drive linkleri"*, *"HTML nedir"*) sorabilirsiniz.`;
         }
       }
 

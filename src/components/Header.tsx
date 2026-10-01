@@ -95,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>{store.ownerName}</span>
               </h1>
               <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-cyan-500/40 shadow-[0_0_10px_rgba(0,210,255,0.15)]">
-                Web Tasarımı (30 Hafta)
+                Web Tasarımı ({store.totalWeeks || 38} Hafta)
               </span>
 
               {isAdmin ? (
@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Haftalık</span>
             </button>
 
-            {/* 30 Hafta Butonu */}
+            {/* 38 Hafta Butonu */}
             <button
               onClick={() => setCurrentView('roadmap')}
               className={`group relative overflow-hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
@@ -159,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-120 group-hover:text-cyan-300 group-hover:rotate-12" />
-              <span>30 Hafta</span>
+              <span>{store.totalWeeks || 38} Hafta</span>
             </button>
 
             {/* YAZDIR BUTONU - Animasyonlu (Hover olunca parlar, hafif kalkar, ikon döner) */}

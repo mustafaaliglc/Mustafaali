@@ -90,16 +90,16 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/90 px-2.5 py-0.5 rounded border border-cyan-500/50 shadow-[0_0_10px_rgba(0,210,255,0.2)]">
-                30 Hafta Listesi
+                {totalWeeks} Hafta Listesi
               </span>
               <span className="text-xs text-sky-800">·</span>
               <span className="text-xs font-semibold text-sky-300">Mustafa Ali Güleç</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">
-              30 Haftalık Web Tasarımı Müfredatı
+              {totalWeeks} Haftalık Web Tasarımı Müfredatı
             </h2>
             <p className="text-xs text-sky-300/80 mt-0.5">
-              Tüm 30 haftayı tek ekranda inceleyin, Google Drive bağlantılarını görün ve düzenlemek için tıklayın.
+              Tüm {totalWeeks} haftayı tek ekranda inceleyin, Google Drive bağlantılarını görün ve düzenlemek için tıklayın.
             </p>
           </div>
 

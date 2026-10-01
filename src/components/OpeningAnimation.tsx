@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 
 interface OpeningAnimationProps {
   ownerName?: string;
+  programTitle?: string;
   onComplete: () => void;
 }
 
 export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   ownerName = 'Mustafa Ali Güleç',
+  programTitle = '38 Haftalık Web Tasarımı Programı',
   onComplete,
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
@@ -77,7 +79,7 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
           <div className="flex items-center justify-center gap-3 pt-2">
             <span className="h-[1px] w-6 sm:w-10 bg-gradient-to-r from-transparent to-cyan-400/50" />
             <p className="text-xs sm:text-sm font-semibold tracking-[0.25em] text-cyan-300 uppercase pl-[0.25em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              30 Haftalık Web Tasarımı Programı
+              {programTitle}
             </p>
             <span className="h-[1px] w-6 sm:w-10 bg-gradient-to-l from-transparent to-cyan-400/50" />
           </div>

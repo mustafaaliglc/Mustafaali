@@ -324,7 +324,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div>
             <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
               <GoogleDriveIcon />
-              <span>30 Hafta Google Drive Klasör Linkleri</span>
+              <span>{totalWeeks} Hafta Google Drive Klasör Linkleri</span>
             </h3>
             <p className="text-xs text-sky-300/80 mt-0.5">
               Her haftanın Drive klasör linkini yapıştırıp "Kaydet" butonuna basarak anında güncelleyebilirsiniz.

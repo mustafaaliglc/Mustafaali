@@ -56,7 +56,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
                   : 'text-sky-300 hover:text-white'
               }`}
             >
-              Tüm 30 Hafta
+              Tüm {store.totalWeeks || 38} Hafta
             </button>
           </div>
         </div>
@@ -88,7 +88,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
                     {store.ownerName}
                   </h1>
                   <p className="text-sm font-semibold text-slate-700 mt-0.5">
-                    30 Haftalık Web Tasarımı Müfredatı
+                    {store.programTitle || '38 Haftalık Web Tasarımı Müfredatı'}
                   </p>
                 </div>
 
