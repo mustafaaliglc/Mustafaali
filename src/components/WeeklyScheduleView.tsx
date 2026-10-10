@@ -12,7 +12,8 @@ import {
   Check,
   Target,
   Sparkles,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 import { WeekPlan, ProgramItem } from '../types/schedule';
 import { DEFAULT_TAGS } from '../data/initialData';
@@ -20,7 +21,6 @@ import { LaserBorderCard } from './LaserBorderCard';
 
 interface WeeklyScheduleViewProps {
   week: WeekPlan;
-  totalWeeks?: number;
   onUpdateWeek: (updatedWeek: WeekPlan) => void;
   onOpenCopyModal: () => void;
   isAdmin: boolean;
@@ -42,7 +42,6 @@ const GoogleDriveIcon = () => (
 
 export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
   week,
-  totalWeeks = 38,
   onUpdateWeek,
   onOpenCopyModal,
   isAdmin,
@@ -129,6 +128,41 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
     onUpdateWeek({ ...week, items: [...items, newItem] });
   };
 
+  // Helper to render interactive links in program items
+  const renderItemText = (text: string) => {
+    if (!text || text.trim() === '') {
+      return <span className="text-sky-500/50 italic">Boş program maddesi</span>;
+    }
+
+    const urlRegex = /(https?:\/\/[^\s]+|[\w-]+\.vercel\.app[^\s]*)/g;
+    const parts = text.split(urlRegex);
+
+    return (
+      <span>
+        {parts.map((part, i) => {
+          if (part && part.match(urlRegex)) {
+            const href = part.startsWith('http') ? part : `https://${part}`;
+            return (
+              <a
+                key={i}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-cyan-300 hover:text-white underline underline-offset-2 decoration-cyan-400 font-semibold hover:shadow-[0_0_10px_rgba(0,210,255,0.5)] transition-all mx-1"
+                title={`${part} sitesini yeni sekmede aç`}
+              >
+                <span>{part}</span>
+                <ExternalLink className="w-3 h-3 inline shrink-0" />
+              </a>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        })}
+      </span>
+    );
+  };
+
   return (
     <div key={week.weekNumber} className="space-y-6 pb-20 animate-cinematic-week">
       
@@ -145,7 +179,7 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/80 px-2.5 py-0.5 rounded-md border border-cyan-500/40 shadow-[0_0_10px_rgba(0,210,255,0.15)]">
-                {week.weekNumber}. Hafta / {totalWeeks} Hafta
+                {week.weekNumber}. Hafta / 38 Hafta
               </span>
               <span className="text-xs text-sky-800">·</span>
               <span className="text-xs font-semibold text-sky-300">
@@ -236,117 +270,141 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
           </div>
         </div>
 
-        {/* GOOGLE DRIVE SECTION with Electric Neon Border & Glow */}
+        {/* RESOURCE SECTION (Google Drive / Live Vercel Project) with Electric Neon Border & Glow */}
         <div className="mt-5 pt-4 border-t border-sky-950/70">
-          <div className="bg-gradient-to-r from-[#091224] via-[#0c162d] to-[#080e1c] rounded-xl p-4 border border-sky-700/40 hover:border-cyan-400/60 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl shadow-black/60">
-            
-            <div className="flex items-start sm:items-center gap-3.5">
-              <div className="p-2.5 bg-black/60 rounded-xl shadow-md border border-sky-700/50 shrink-0">
-                <GoogleDriveIcon />
-              </div>
+          {(() => {
+            const isVercel = Boolean(week.driveFolderUrl && week.driveFolderUrl.includes('vercel.app'));
 
-              <div>
+            return (
+              <div className="bg-gradient-to-r from-[#091224] via-[#0c162d] to-[#080e1c] rounded-xl p-4 border border-sky-700/40 hover:border-cyan-400/60 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl shadow-black/60">
+                
+                <div className="flex items-start sm:items-center gap-3.5">
+                  <div className="p-2.5 bg-black/60 rounded-xl shadow-md border border-sky-700/50 shrink-0">
+                    {isVercel ? (
+                      <Globe className="w-5 h-5 text-cyan-400 animate-pulse" />
+                    ) : (
+                      <GoogleDriveIcon />
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-xs sm:text-sm font-bold text-white">
+                        {week.driveTitle || (
+                          isVercel
+                            ? `${week.weekNumber}. Hafta Canlı Web Projesi`
+                            : `${week.weekNumber}. Hafta Google Drive Ders Klasörü`
+                        )}
+                      </h3>
+                      {week.driveFolderUrl ? (
+                        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                          isVercel
+                            ? 'text-cyan-300 bg-cyan-950/90 border-cyan-400/50 shadow-[0_0_12px_rgba(0,210,255,0.25)]'
+                            : 'text-emerald-300 bg-emerald-950/80 border-emerald-500/40'
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isVercel ? 'bg-cyan-400' : 'bg-emerald-400'}`} />
+                          {isVercel ? 'Vercel Canlı Proje Yayında' : 'Drive Klasörü Bağlı'}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/40">
+                          Bağlantı Henüz Eklenmedi
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] text-sky-300/80 mt-0.5">
+                      {isVercel
+                        ? 'Mustafa Ali Güleç canlı web projesi ve yayın adresi (mustafaali2.vercel.app)'
+                        : 'Web tasarımı ders kaynakları, örnek kodlar, Figma tasarımları ve haftalık materyaller'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Actions for Drive / Live link */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-xs sm:text-sm font-bold text-white">
-                    {week.driveTitle || `${week.weekNumber}. Hafta Google Drive Ders Klasörü`}
-                  </h3>
                   {week.driveFolderUrl ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Drive Klasörü Bağlı
-                    </span>
+                    <>
+                      <a
+                        href={week.driveFolderUrl.startsWith('http') ? week.driveFolderUrl : `https://${week.driveFolderUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-electric inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-xl shadow-[0_0_20px_rgba(0,210,255,0.4)] transition-all hover:scale-105"
+                      >
+                        {isVercel ? <Globe className="w-3.5 h-3.5" /> : <FolderOpen className="w-3.5 h-3.5" />}
+                        <span>
+                          {isVercel
+                            ? 'Canlı Projeyi Aç (mustafaali2.vercel.app)'
+                            : 'Google Drive Klasörünü Aç'}
+                        </span>
+                        <ExternalLink className="w-3 h-3 ml-0.5 opacity-90" />
+                      </a>
+
+                      <button
+                        onClick={handleCopyDriveUrl}
+                        className="group inline-flex items-center gap-1 px-3 py-2 text-xs font-medium text-sky-200 bg-[#0b1326] hover:bg-sky-950/90 border border-sky-700/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
+                        title={isVercel ? 'Proje linkini kopyala' : 'Drive linkini kopyala'}
+                      >
+                        {copiedDrive ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-emerald-300 font-semibold">Kopyalandı</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-cyan-400 transition-transform group-hover:scale-115" />
+                            <span className="hidden sm:inline">Kopyala</span>
+                          </>
+                        )}
+                      </button>
+
+                      {isAdmin && (
+                        <button
+                          onClick={() => {
+                            setTempDriveUrl(week.driveFolderUrl || '');
+                            setIsEditingDriveUrl(!isEditingDriveUrl);
+                          }}
+                          className="group p-2 text-xs font-medium text-sky-300 hover:text-white bg-[#0b1326] hover:bg-sky-950/90 border border-sky-700/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
+                          title="Bağlantıyı düzenle"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 transition-transform group-hover:rotate-12" />
+                        </button>
+                      )}
+                    </>
                   ) : (
-                    <span className="text-[11px] text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/40">
-                      Drive Linki Henüz Eklenmedi
-                    </span>
+                    isAdmin ? (
+                      <button
+                        onClick={() => setIsEditingDriveUrl(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-cyan-200 bg-sky-950/70 hover:bg-sky-900/80 border border-sky-600/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,210,255,0.3)] hover:-translate-y-0.5 active:scale-95"
+                      >
+                        <Link className="w-3.5 h-3.5" />
+                        <span>Link / Klasör Ekle</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={onOpenAdminLogin}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-sky-400 hover:text-cyan-300 bg-black/40 border border-sky-900/40 rounded-xl transition-all"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-sky-500" />
+                        <span>Yönetici Tarafından Eklenecektir</span>
+                      </button>
+                    )
                   )}
                 </div>
 
-                <p className="text-[11px] text-sky-300/80 mt-0.5">
-                  Web tasarımı ders kaynakları, örnek kodlar, Figma tasarımları ve haftalık materyaller
-                </p>
               </div>
-            </div>
+            );
+          })()}
 
-            {/* Actions for Drive link */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {week.driveFolderUrl ? (
-                <>
-                  <a
-                    href={week.driveFolderUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-electric inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-xl shadow-[0_0_20px_rgba(0,210,255,0.4)] transition-all"
-                  >
-                    <FolderOpen className="w-3.5 h-3.5" />
-                    <span>Google Drive Klasörünü Aç</span>
-                    <ExternalLink className="w-3 h-3 ml-0.5 opacity-90" />
-                  </a>
-
-                  <button
-                    onClick={handleCopyDriveUrl}
-                    className="group inline-flex items-center gap-1 px-3 py-2 text-xs font-medium text-sky-200 bg-[#0b1326] hover:bg-sky-950/90 border border-sky-700/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
-                    title="Drive linkini kopyala"
-                  >
-                    {copiedDrive ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-300 font-semibold">Kopyalandı</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5 text-cyan-400 transition-transform group-hover:scale-115" />
-                        <span className="hidden sm:inline">Kopyala</span>
-                      </>
-                    )}
-                  </button>
-
-                  {isAdmin && (
-                    <button
-                      onClick={() => {
-                        setTempDriveUrl(week.driveFolderUrl || '');
-                        setIsEditingDriveUrl(!isEditingDriveUrl);
-                      }}
-                      className="group p-2 text-xs font-medium text-sky-300 hover:text-white bg-[#0b1326] hover:bg-sky-950/90 border border-sky-700/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
-                      title="Drive linkini düzenle"
-                    >
-                      <Edit2 className="w-3.5 h-3.5 transition-transform group-hover:rotate-12" />
-                    </button>
-                  )}
-                </>
-              ) : (
-                isAdmin ? (
-                  <button
-                    onClick={() => setIsEditingDriveUrl(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-cyan-200 bg-sky-950/70 hover:bg-sky-900/80 border border-sky-600/50 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:shadow-[0_0_15px_rgba(0,210,255,0.3)] hover:-translate-y-0.5 active:scale-95"
-                  >
-                    <Link className="w-3.5 h-3.5" />
-                    <span>Google Drive Linki Ekle</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={onOpenAdminLogin}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-sky-400 hover:text-cyan-300 bg-black/40 border border-sky-900/40 rounded-xl transition-all"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-sky-500" />
-                    <span>Yönetici Tarafından Eklenecektir</span>
-                  </button>
-                )
-              )}
-            </div>
-
-          </div>
-
-          {/* Drive URL Edit Form (Admin Only) */}
+          {/* Drive / Live URL Edit Form (Admin Only) */}
           {isAdmin && isEditingDriveUrl && (
             <div className="mt-3 p-4 bg-[#091224] rounded-xl border border-sky-600/50 animate-in fade-in duration-200 space-y-3 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
                   <Link className="w-3.5 h-3.5" />
-                  Google Drive Klasör Bağlantısı (URL)
+                  Google Drive veya Canlı Web Projesi Bağlantısı (URL)
                 </span>
                 <span className="text-[11px] text-sky-400/80">
-                  Google Drive &gt; Paylaş &gt; Bağlantıyı Kopyala
+                  Örn: https://mustafaali2.vercel.app veya Drive linki
                 </span>
               </div>
 
@@ -355,7 +413,7 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
                   type="url"
                   value={tempDriveUrl}
                   onChange={(e) => setTempDriveUrl(e.target.value)}
-                  placeholder="https://drive.google.com/drive/folders/..."
+                  placeholder="https://mustafaali2.vercel.app veya https://drive.google.com/..."
                   className="flex-1 text-xs bg-black/60 border border-sky-700/60 rounded-xl px-3 py-2 text-white placeholder:text-sky-500/60 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                 />
                 <div className="flex items-center gap-2">
@@ -473,15 +531,13 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
                         }`}
                       />
                     ) : (
-                      <p
+                      <div
                         className={`text-xs sm:text-sm font-medium ${
                           item.isCompleted ? 'line-through text-sky-500/60' : 'text-white'
                         }`}
                       >
-                        {item.text || (
-                          <span className="text-sky-500/50 italic">Boş program maddesi</span>
-                        )}
-                      </p>
+                        {renderItemText(item.text)}
+                      </div>
                     )}
                   </div>
 

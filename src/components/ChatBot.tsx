@@ -7,7 +7,8 @@ import {
   RotateCcw, 
   ExternalLink, 
   FolderOpen, 
-  Bot
+  Bot,
+  Globe
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
 
@@ -33,10 +34,12 @@ export const ChatBot: React.FC<ChatBotProps> = ({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const totalProgramWeeks = weeks.length || 38;
+
   const initialWelcome: ChatMessage = {
     id: 'welcome',
     role: 'assistant',
-    content: `Merhaba Mustafa Ali! 👋 Ben ${weeks.length || 38} Haftalık Web Tasarımı programı asistanınım.
+    content: `Merhaba Mustafa Ali! 👋 Ben ${totalProgramWeeks} Haftalık Web Tasarımı programı asistanınım.
 
 Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İster hafta numarası ver, ister web tasarımı (HTML, CSS, Figma vb.) konusunda merak ettiğin bir şeyi sor!`,
     timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
@@ -149,7 +152,7 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
         } else if (q.includes('javascript') || q.includes('js')) {
           fallbackText = `⚡ **JavaScript:** Web sayfalarına etkileşim, animasyon ve veri yönetimi kazandıran temel dildir.`;
         } else {
-          fallbackText = `🤖 **Asistan:** Sorunuzu aldım! ${weeks.length} haftalık web tasarımı programında istediğiniz haftayı (örn: *"3. hafta"*, *"Drive linkleri"*, *"HTML nedir"*) sorabilirsiniz.`;
+          fallbackText = `🤖 **Asistan:** Sorunuzu aldım! ${totalProgramWeeks} haftalık web tasarımı programında istediğiniz haftayı (örn: *"3. hafta"*, *"Drive linkleri"*, *"HTML nedir"*) sorabilirsiniz.`;
         }
       }
 
@@ -190,20 +193,32 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
       }
 
       const isMarkdownLink = !!match[1] && !!match[2];
-      const linkLabel = isMarkdownLink ? match[1] : 'Bağlantıyı Aç';
       const linkUrl = isMarkdownLink ? match[2] : match[3].replace(/[),.]+$/, '');
+      const isVercel = linkUrl.includes('vercel.app');
       const isDrive = linkUrl.includes('drive.google.com');
+      const defaultLabel = isVercel
+        ? '🌐 Canlı Projeyi Aç (mustafaali2.vercel.app)'
+        : isDrive
+        ? '📁 Google Drive Klasörünü Aç'
+        : 'Bağlantıyı Aç';
+      const displayLabel = isMarkdownLink ? match[1] : defaultLabel;
 
       elements.push(
         <div key={`link-${keyIdx++}`} className="my-1.5 inline-block">
           <a
-            href={linkUrl}
+            href={linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`}
             target="_blank"
             rel="noopener noreferrer"
             className={`btn-electric inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-md active:scale-95`}
           >
-            {isDrive ? <FolderOpen className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
-            <span>{isDrive ? `📁 ${linkLabel.includes('Drive') ? linkLabel : 'Google Drive Klasörünü Aç'}` : linkLabel}</span>
+            {isDrive ? (
+              <FolderOpen className="w-3.5 h-3.5" />
+            ) : isVercel ? (
+              <Globe className="w-3.5 h-3.5" />
+            ) : (
+              <ExternalLink className="w-3.5 h-3.5" />
+            )}
+            <span>{displayLabel}</span>
             <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
           </a>
         </div>
@@ -229,9 +244,9 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
 
   const quickChips = [
     '📁 1. Hafta Drive Linki',
+    '🌐 3. Hafta Canlı Proje Linki',
     `📌 ${activeWeekNum}. Haftanın Konusu Nedir?`,
-    '💡 Web Tasarımı Çalışma Önerisi',
-    '📂 Hangi haftaların Drive linki var?',
+    '📂 Hangi haftaların linki var?',
   ];
 
   return (

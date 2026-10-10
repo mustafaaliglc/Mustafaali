@@ -4,7 +4,8 @@ import {
   ChevronRight, 
   FolderCheck,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  Globe
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
 import { LaserBorderCard } from './LaserBorderCard';
@@ -37,12 +38,14 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
     }
   }, [activeWeekNum]);
 
+  const maxWeeks = weeks.length || 38;
+
   const handlePrev = () => {
     if (activeWeekNum > 1) onSelectWeek(activeWeekNum - 1);
   };
 
   const handleNext = () => {
-    if (activeWeekNum < weeks.length) onSelectWeek(activeWeekNum + 1);
+    if (activeWeekNum < maxWeeks) onSelectWeek(activeWeekNum + 1);
   };
 
   const scrollLeftStrip = () => {
@@ -110,8 +113,17 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
 
           {currentWeek.driveFolderUrl && (
             <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-cyan-300 bg-cyan-950/80 border border-cyan-500/40 px-2.5 py-1 rounded-lg shadow-sm">
-              <FolderCheck className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Drive Bağlı</span>
+              {currentWeek.driveFolderUrl.includes('vercel.app') ? (
+                <>
+                  <Globe className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                  <span>Vercel Yayında</span>
+                </>
+              ) : (
+                <>
+                  <FolderCheck className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Drive Bağlı</span>
+                </>
+              )}
             </span>
           )}
         </div>
@@ -119,9 +131,9 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
         {/* Next button */}
         <button
           onClick={handleNext}
-          disabled={activeWeekNum >= weeks.length}
+          disabled={activeWeekNum >= maxWeeks}
           className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-            activeWeekNum >= weeks.length
+            activeWeekNum >= maxWeeks
               ? 'text-sky-900/40 cursor-not-allowed bg-sky-950/20'
               : 'text-sky-200 hover:text-white bg-sky-950/60 hover:bg-sky-900/60 border border-sky-800/50 hover:border-sky-400 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:-translate-y-0.5 active:scale-95'
           }`}
@@ -131,7 +143,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
         </button>
       </div>
 
-      {/* 38 Week Quick Scroll Strip with Left & Right Arrow controls to ensure 1 & 2 are NEVER hidden */}
+      {/* 30 Week Quick Scroll Strip with Left & Right Arrow controls to ensure 1 & 2 are NEVER hidden */}
       <div className="mt-3 pt-3 border-t border-sky-950/70 flex items-center gap-1">
         
         {/* Quick Scroll to 1. Week & Left nudge */}
@@ -150,7 +162,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* The 38 Week Buttons Strip - Fixed left alignment (NO justify-center!) so weeks 1 and 2 are always reachable! */}
+        {/* The 30 Week Buttons Strip - Fixed left alignment (NO justify-center!) so weeks 1 and 2 are always reachable! */}
         <div
           ref={scrollContainerRef}
           className="flex items-center justify-start gap-1.5 overflow-x-auto py-2 px-2 scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-[#090d1a] scroll-smooth flex-1"
@@ -178,7 +190,10 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
                 {isAllDone ? (
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-1 ring-[#090d1a]" />
                 ) : week.driveFolderUrl ? (
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-[#090d1a] animate-pulse" title="Drive bağlantısı var" />
+                  <span
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-[#090d1a] animate-pulse"
+                    title={week.driveFolderUrl.includes('vercel.app') ? 'Canlı Vercel projesi var' : 'Drive bağlantısı var'}
+                  />
                 ) : hasItems ? (
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-sky-400 ring-1 ring-[#090d1a]" />
                 ) : null}

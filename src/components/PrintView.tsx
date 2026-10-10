@@ -88,7 +88,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
                     {store.ownerName}
                   </h1>
                   <p className="text-sm font-semibold text-slate-700 mt-0.5">
-                    {store.programTitle || '38 Haftalık Web Tasarımı Müfredatı'}
+                    {store.totalWeeks || 38} Haftalık Web Tasarımı Müfredatı
                   </p>
                 </div>
 
@@ -112,7 +112,12 @@ export const PrintView: React.FC<PrintViewProps> = ({
                 )}
                 {week.driveFolderUrl && (
                   <p className="text-xs text-blue-700 mt-1 font-mono break-all">
-                    <strong>Google Drive Klasörü:</strong> {week.driveFolderUrl}
+                    <strong>
+                      {week.driveFolderUrl.includes('vercel.app')
+                        ? 'Canlı Proje (Vercel):'
+                        : 'Google Drive Klasörü:'}
+                    </strong>{' '}
+                    {week.driveFolderUrl}
                   </p>
                 )}
                 {week.content && (

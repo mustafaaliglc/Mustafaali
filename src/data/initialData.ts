@@ -1,7 +1,7 @@
 import { ProgramStore, WeekPlan, ProgramItem } from '../types/schedule';
 
 export const WEEK_1_DRIVE_URL = 'https://drive.google.com/drive/folders/1IPqE7_sRv7mMc5hRAhJifFiC42VtB-K1?hl=tr';
-export const WEEK_2_DRIVE_URL = 'https://drive.google.com/drive/folders/1MY7fXtKi7LvN9KKsEzZeYwjRhXVHF1_I?hl=tr';
+export const WEEK_3_VERCEL_URL = 'https://mustafaali2.vercel.app';
 
 export const DEFAULT_TAGS = [
   'HTML & CSS',
@@ -13,6 +13,29 @@ export const DEFAULT_TAGS = [
 ];
 
 export function generateDefaultItems(weekNumber: number): ProgramItem[] {
+  if (weekNumber === 3) {
+    return [
+      {
+        id: 'w3-item-1',
+        text: 'Canlı Web Projesi Yayını: https://mustafaali2.vercel.app',
+        tag: 'Web Projesi',
+        isCompleted: true,
+      },
+      {
+        id: 'w3-item-2',
+        text: 'Vercel Deployment & Canlı Yayın Testleri',
+        tag: 'HTML & CSS',
+        isCompleted: false,
+      },
+      {
+        id: 'w3-item-3',
+        text: 'Responsive Arayüz ve Tasarım İncelemesi',
+        tag: 'Web Projesi',
+        isCompleted: false,
+      },
+    ];
+  }
+
   // Kullanıcı düzenleyecek diye boş bırakılmış temiz program maddeleri (saat/seans yok)
   return [
     {
@@ -38,61 +61,99 @@ export function generateDefaultItems(weekNumber: number): ProgramItem[] {
 
 export function generateEmptyWeek(weekNumber: number): WeekPlan {
   const isWeek1 = weekNumber === 1;
-  const isWeek2 = weekNumber === 2;
+  const isWeek3 = weekNumber === 3;
   return {
     weekNumber,
     title: `${weekNumber}. Hafta`,
-    topic: isWeek1 ? 'Web Tasarımına Giriş & HTML/CSS' : isWeek2 ? 'Temel HTML Yapıları & Afiş Tasarımı' : '',
-    driveFolderUrl: isWeek1 ? WEEK_1_DRIVE_URL : isWeek2 ? WEEK_2_DRIVE_URL : '',
-    driveTitle: isWeek1 ? '1. Hafta Web Tasarımı Drive Klasörü' : isWeek2 ? '2. Hafta Drive Klasörü (Afiş Dahil)' : '',
-    content: '',
+    topic: isWeek1 
+      ? 'Web Tasarımına Giriş & HTML/CSS' 
+      : isWeek3 
+        ? 'Canlı Web Projesi & Vercel Dağıtımı' 
+        : '',
+    driveFolderUrl: isWeek1 
+      ? WEEK_1_DRIVE_URL 
+      : isWeek3 
+        ? WEEK_3_VERCEL_URL 
+        : '',
+    driveTitle: isWeek1 
+      ? '1. Hafta Web Tasarımı Drive Klasörü' 
+      : isWeek3 
+        ? '3. Hafta Canlı Web Projesi (mustafaali2.vercel.app)' 
+        : '',
+    content: isWeek3 ? 'Canlı Web Projesi: https://mustafaali2.vercel.app' : '',
     items: generateDefaultItems(weekNumber),
   };
 }
 
-export const TOTAL_WEEKS = 38;
-
 export function createInitialProgramStore(): ProgramStore {
   const weeks: WeekPlan[] = [];
-  for (let i = 1; i <= TOTAL_WEEKS; i++) {
+  for (let i = 1; i <= 38; i++) {
     weeks.push(generateEmptyWeek(i));
   }
 
   return {
     ownerName: 'Mustafa Ali Güleç',
     programTitle: '38 Haftalık Web Tasarımı Programı',
-    totalWeeks: TOTAL_WEEKS,
+    totalWeeks: 38,
     weeks,
     lastUpdated: new Date().toISOString(),
   };
 }
 
-const STORAGE_KEY = 'mustafa_ali_gulec_38_hafta_web_tasarim_v5_dark';
-const LEGACY_STORAGE_KEY = 'mustafa_ali_gulec_30_hafta_web_tasarim_v4_dark';
+const STORAGE_KEY = 'mustafa_ali_gulec_30_hafta_web_tasarim_v4_dark';
 
 export function loadProgramFromStorage(): ProgramStore {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed && Array.isArray(parsed.weeks)) {
-        // Migrate to 38 weeks if older version had fewer weeks
-        while (parsed.weeks.length < TOTAL_WEEKS) {
-          parsed.weeks.push(generateEmptyWeek(parsed.weeks.length + 1));
+        // Automatically extend to 38 weeks if user has fewer (e.g. 30 weeks)
+        if (parsed.weeks.length < 38) {
+          for (let i = parsed.weeks.length + 1; i <= 38; i++) {
+            parsed.weeks.push(generateEmptyWeek(i));
+          }
         }
-
-        parsed.totalWeeks = TOTAL_WEEKS;
-        if (parsed.programTitle && parsed.programTitle.includes('30 Haftalık')) {
-          parsed.programTitle = parsed.programTitle.replace('30 Haftalık', '38 Haftalık');
+        parsed.totalWeeks = 38;
+        if (parsed.programTitle) {
+          parsed.programTitle = parsed.programTitle.replace(/30/, '38');
         }
 
         if (!parsed.weeks[0].driveFolderUrl) {
           parsed.weeks[0].driveFolderUrl = WEEK_1_DRIVE_URL;
           parsed.weeks[0].driveTitle = '1. Hafta Web Tasarımı Drive Klasörü';
         }
-        if (parsed.weeks[1] && !parsed.weeks[1].driveFolderUrl) {
-          parsed.weeks[1].driveFolderUrl = WEEK_2_DRIVE_URL;
-          parsed.weeks[1].driveTitle = '2. Hafta Drive Klasörü (Afiş Dahil)';
+
+        // 3. Hafta Canlı Vercel linki (mustafaali2.vercel.app)
+        if (parsed.weeks[2]) {
+          if (!parsed.weeks[2].driveFolderUrl || parsed.weeks[2].driveFolderUrl === '') {
+            parsed.weeks[2].driveFolderUrl = WEEK_3_VERCEL_URL;
+            parsed.weeks[2].driveTitle = '3. Hafta Canlı Web Projesi (mustafaali2.vercel.app)';
+          }
+          if (!parsed.weeks[2].topic || parsed.weeks[2].topic === '') {
+            parsed.weeks[2].topic = 'Canlı Web Projesi & Vercel Dağıtımı';
+          }
+          if (!parsed.weeks[2].items || parsed.weeks[2].items.length === 0) {
+            parsed.weeks[2].items = generateDefaultItems(3);
+          } else {
+            const hasVercel = parsed.weeks[2].items.some((it: ProgramItem) =>
+              it.text && it.text.includes('mustafaali2.vercel.app')
+            );
+            if (!hasVercel) {
+              if (!parsed.weeks[2].items[0].text || parsed.weeks[2].items[0].text.trim() === '') {
+                parsed.weeks[2].items[0].text = 'Canlı Web Projesi Yayını: https://mustafaali2.vercel.app';
+                parsed.weeks[2].items[0].tag = 'Web Projesi';
+                parsed.weeks[2].items[0].isCompleted = true;
+              } else {
+                parsed.weeks[2].items.unshift({
+                  id: `w3-item-vercel-${Date.now()}`,
+                  text: 'Canlı Web Projesi Yayını: https://mustafaali2.vercel.app',
+                  tag: 'Web Projesi',
+                  isCompleted: true,
+                });
+              }
+            }
+          }
         }
         // Ensure items array exists on all weeks
         parsed.weeks.forEach((w: WeekPlan, idx: number) => {
@@ -100,7 +161,6 @@ export function loadProgramFromStorage(): ProgramStore {
             w.items = generateDefaultItems(idx + 1);
           }
         });
-
         saveProgramToStorage(parsed);
         return parsed;
       }
@@ -118,7 +178,6 @@ export function saveProgramToStorage(store: ProgramStore): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ...store,
-      totalWeeks: TOTAL_WEEKS,
       lastUpdated: new Date().toISOString(),
     }));
   } catch (err) {

@@ -54,9 +54,13 @@ function generateSmartFallbackResponse(
       }
 
       if (targetWeek.driveFolderUrl) {
-        reply += `📂 **Google Drive Ders & Kaynak Klasörü:**\n${targetWeek.driveFolderUrl}\n\nBu bağlantıdan haftaya ait kaynak kodları, ders videolarını ve tasarım dosyalarını indirebilirsiniz.`;
+        if (targetWeek.driveFolderUrl.includes('vercel.app')) {
+          reply += `🌐 **Canlı Web Projesi (Vercel):**\n${targetWeek.driveFolderUrl}\n\nBu bağlantıdan haftaya ait canlı yayındaki web projesini doğrudan ziyaret edebilirsiniz!`;
+        } else {
+          reply += `📂 **Google Drive Ders & Kaynak Klasörü:**\n${targetWeek.driveFolderUrl}\n\nBu bağlantıdan haftaya ait kaynak kodları, ders videolarını ve tasarım dosyalarını indirebilirsiniz.`;
+        }
       } else {
-        reply += `📂 Bu hafta için henüz Google Drive linki tanımlanmamış. Yönetici (Admin) panelinden klasör linkinizi ekleyebilirsiniz.`;
+        reply += `📂 Bu hafta için henüz bağlantı tanımlanmamış. Yönetici (Admin) panelinden linkinizi ekleyebilirsiniz.`;
       }
       return reply;
     }
@@ -118,12 +122,13 @@ function generateSmartFallbackResponse(
 
   // 6. General Curriculum Overview
   if (q.includes('program') || q.includes('müfredat') || q.includes('kaç hafta') || q.includes('özet')) {
-    const total = weeks.length || 38;
-    return `📚 **Mustafa Ali Güleç - ${total} Haftalık Web Tasarımı Programı:**\n\n- **Toplam Hafta:** ${total} Hafta\n- **Başlangıç:** HTML5, CSS3, Tipografi ve Temel Tasarım\n- **Orta Seviye:** Flexbox, CSS Grid, Responsive Tasarım, Figma & UI/UX\n- **İleri Seviye:** JavaScript Temelleri, DOM, Modern Web Bileşenleri, Proje Geliştirme\n- **Bitirme:** Portfolyo oluşturma ve canlıya alma.\n\nDetaylı incelemek istediğiniz haftayı belirtebilirsiniz (Örn: *"10. hafta"*).`;
+    const totalW = weeks.length || 38;
+    return `📚 **Mustafa Ali Güleç - ${totalW} Haftalık Web Tasarımı Programı:**\n\n- **Toplam Hafta:** ${totalW} Hafta\n- **Başlangıç:** HTML5, CSS3, Tipografi ve Temel Tasarım\n- **Orta Seviye:** Flexbox, CSS Grid, Responsive Tasarım, Figma & UI/UX\n- **İleri Seviye:** JavaScript Temelleri, DOM, Modern Web Bileşenleri, Proje Geliştirme\n- **Bitirme:** Portfolyo oluşturma ve canlıya alma.\n\nDetaylı incelemek istediğiniz haftayı belirtebilirsiniz (Örn: *"10. hafta"*).`;
   }
 
   // 7. General Fallback
-  return `🤖 **Web Tasarımı Asistanı:**\n\nSorunuzla ilgili size yardımcı olmak için buradayım! ${weeks.length || 38} haftalık web tasarımı programı hakkında şunları sorabilirsiniz:\n- *"1. hafta dersi ve Drive linki"* \n- *"Flexbox ile CSS Grid arasındaki fark nedir?"*\n- *"Google Drive klasörlerine nasıl erişirim?"*\n- *"Aktif haftanın detayları"*`;
+  const totalW = weeks.length || 38;
+  return `🤖 **Web Tasarımı Asistanı:**\n\nSorunuzla ilgili size yardımcı olmak için buradayım! ${totalW} haftalık web tasarımı programı hakkında şunları sorabilirsiniz:\n- *"1. hafta dersi ve Drive linki"* \n- *"Flexbox ile CSS Grid arasındaki fark nedir?"*\n- *"Google Drive klasörlerine nasıl erişirim?"*\n- *"Aktif haftanın detayları"*`;
 }
 
 // Chat endpoint with Gemini + Smart Fallback
@@ -137,9 +142,10 @@ app.post('/api/chat', async (req, res) => {
   const userMessages = messages.filter((m: any) => m.role === 'user');
   const lastUserMessage = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : '';
 
-  // If Gemini API is configured, try calling Gemini 2.5 Flash
+  // If Gemini API is configured, try calling Gemini
   if (ai) {
     try {
+      const totalW = (weeksContext && weeksContext.length) || 38;
       // Build curriculum knowledge context
       let contextSummary = '';
       if (weeksContext && Array.isArray(weeksContext)) {
@@ -155,8 +161,7 @@ app.post('/api/chat', async (req, res) => {
           .join('\n');
       }
 
-      const total = weeksContext?.length || 38;
-      const systemInstruction = `Sen Mustafa Ali Güleç'in ${total} Haftalık Web Tasarımı Programı'nın özel, samimi, uzman ve yardımsever yapay zeka asistanısın.
+      const systemInstruction = `Sen Mustafa Ali Güleç'in ${totalW} Haftalık Web Tasarımı Programı'nın özel, samimi, uzman ve yardımsever yapay zeka asistanısın.
 
 Görevin:
 1. Kullanıcıya hangi haftanın Google Drive ders klasörüne veya programına ulaşmak istediğinde yardımcı olmak.
@@ -165,7 +170,7 @@ Görevin:
 4. Kullanıcı hangi haftayı sorarsa o haftanın konularını ve materyallerini özetlemek.
 5. Şu an seçili olan hafta: ${activeWeekNum || 1}. Hafta.
 
-Mevcut ${total} Haftalık Program ve Drive Bağlantıları Verisi:
+Mevcut ${totalW} Haftalık Program ve Drive Bağlantıları Verisi:
 ${contextSummary}
 
 Cevaplama Kuralları:

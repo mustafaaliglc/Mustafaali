@@ -19,12 +19,12 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { NeonBackgroundCanvas, NeonColorMode } from './components/NeonBackgroundCanvas';
-import { PosterView } from './components/PosterView';
+import { LogoDownloadModal } from './components/LogoDownloadModal';
 
 export default function App() {
   const [store, setStore] = useState<ProgramStore>(() => loadProgramFromStorage());
   const [activeWeekNum, setActiveWeekNum] = useState<number>(1);
-  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'print' | 'admin' | 'poster'>('week');
+  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'print' | 'admin'>('week');
   const [neonColorMode, setNeonColorMode] = useState<NeonColorMode | 'off'>(() => {
     try {
       const saved = localStorage.getItem('mag_neon_color_mode');
@@ -87,9 +87,8 @@ export default function App() {
   });
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  // Copy modal state
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
 
   // Save to localStorage whenever store changes
   useEffect(() => {
@@ -185,11 +184,11 @@ export default function App() {
       fileReader.onload = (event) => {
         try {
           const parsed = JSON.parse(event.target?.result as string);
-          if (parsed && Array.isArray(parsed.weeks) && parsed.weeks.length === 30) {
+          if (parsed && Array.isArray(parsed.weeks) && parsed.weeks.length >= 1) {
             setStore(parsed);
-            alert('30 haftalık web tasarımı programı başarıyla yüklendi!');
+            alert(`${parsed.weeks.length} haftalık web tasarımı programı başarıyla yüklendi!`);
           } else {
-            alert('Hatalı dosya formatı: 30 haftalık program verisi bulunamadı.');
+            alert('Hatalı dosya formatı: Program verisi bulunamadı.');
           }
         } catch (err) {
           alert('JSON dosyası okunurken hata oluştu.');
@@ -202,7 +201,7 @@ export default function App() {
   const handleReset = () => {
     if (
       confirm(
-        'Tüm 30 haftalık programı sıfırlamak istediğinize emin misiniz? (Dilerseniz önce Yedekle butonunu kullanabilirsiniz).'
+        'Tüm 38 haftalık programı sıfırlamak istediğinize emin misiniz? (Dilerseniz önce Yedekle butonunu kullanabilirsiniz).'
       )
     ) {
       const fresh = createInitialProgramStore();
@@ -224,7 +223,6 @@ export default function App() {
       {showIntro && (
         <OpeningAnimation
           ownerName={store.ownerName}
-          programTitle={store.programTitle}
           onComplete={handleIntroComplete}
         />
       )}
@@ -266,7 +264,6 @@ export default function App() {
           {currentView === 'week' && (
             <WeeklyScheduleView
               week={activeWeek}
-              totalWeeks={store.totalWeeks}
               onUpdateWeek={handleUpdateWeek}
               onOpenCopyModal={() => setIsCopyModalOpen(true)}
               isAdmin={isAdmin}
@@ -291,13 +288,6 @@ export default function App() {
               store={store}
               activeWeekNum={activeWeekNum}
               onBack={() => setCurrentView('week')}
-            />
-          )}
-
-          {currentView === 'poster' && (
-            <PosterView
-              onBack={() => setCurrentView('week')}
-              neonColorMode={neonColorMode}
             />
           )}
 
@@ -343,6 +333,30 @@ export default function App() {
           setActiveWeekNum(num);
           setCurrentView('week');
         }}
+      />
+
+      {/* Floating Logo Showcase & Download Button (Bottom Left) */}
+      <button
+        onClick={() => setIsLogoModalOpen(true)}
+        title="Özel MAG Logo Tasarımlarını İncele ve İndir"
+        className="fixed bottom-5 left-5 z-40 flex items-center gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-[#070e22]/95 hover:bg-[#0b1838] border border-cyan-400/60 text-cyan-300 hover:text-white shadow-[0_0_20px_rgba(0,210,255,0.35)] hover:shadow-[0_0_25px_rgba(0,210,255,0.6)] transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer backdrop-blur-md group"
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+        </span>
+        <span className="text-xs font-semibold tracking-wide flex items-center gap-1.5">
+          <span>MAG Logo</span>
+          <span className="text-[10px] text-cyan-200/90 bg-cyan-950/90 px-1.5 py-0.5 rounded border border-cyan-500/40">
+            İndir
+          </span>
+        </span>
+      </button>
+
+      {/* MAG Logo Showcase & Download Modal */}
+      <LogoDownloadModal
+        isOpen={isLogoModalOpen}
+        onClose={() => setIsLogoModalOpen(false)}
       />
 
     </div>

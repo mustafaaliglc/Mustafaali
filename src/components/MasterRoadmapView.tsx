@@ -9,7 +9,8 @@ import {
   CheckCircle2,
   Clock,
   Layers,
-  BookOpen
+  BookOpen,
+  Globe
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
 import { LaserBorderCard } from './LaserBorderCard';
@@ -243,18 +244,27 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
                   )}
                 </p>
 
-                {/* Google Drive Status */}
+                {/* Google Drive or Live Vercel Status */}
                 {week.driveFolderUrl ? (
                   <div className="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-cyan-300 bg-cyan-950/80 px-2.5 py-1.5 rounded-lg border border-cyan-500/40 shadow-xs">
                     <div className="flex items-center gap-1.5 truncate">
-                      <GoogleDriveIcon />
-                      <span className="truncate">Google Drive Klasörü</span>
+                      {week.driveFolderUrl.includes('vercel.app') ? (
+                        <>
+                          <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0 animate-pulse" />
+                          <span className="truncate">Vercel: mustafaali2.vercel.app</span>
+                        </>
+                      ) : (
+                        <>
+                          <GoogleDriveIcon />
+                          <span className="truncate">Google Drive Klasörü</span>
+                        </>
+                      )}
                     </div>
                     <ExternalLink className="w-3 h-3 shrink-0" />
                   </div>
                 ) : (
                   <div className="mt-2.5 text-[11px] text-sky-500/50 bg-black/40 px-2.5 py-1.5 rounded-lg border border-sky-950">
-                    Drive linki henüz eklenmedi
+                    Drive / Link henüz eklenmedi
                   </div>
                 )}
 
