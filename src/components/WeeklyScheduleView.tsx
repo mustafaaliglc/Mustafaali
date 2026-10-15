@@ -59,6 +59,7 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
   const [tempDriveUrl, setTempDriveUrl] = useState(week.driveFolderUrl || '');
   const [copiedDrive, setCopiedDrive] = useState(false);
   const [isPosterLightboxOpen, setIsPosterLightboxOpen] = useState(false);
+  const [isQrLightboxOpen, setIsQrLightboxOpen] = useState(false);
 
   const items = week.items || [];
 
@@ -540,6 +541,143 @@ export const WeeklyScheduleView: React.FC<WeeklyScheduleViewProps> = ({
             </div>
           </div>
         </LaserBorderCard>
+      )}
+
+      {/* 4. HAFTA QR KOD KARTI */}
+      {week.weekNumber === 4 && (
+        <LaserBorderCard
+          neonColorMode={neonColorMode}
+          speed="slow"
+          active={true}
+          innerClassName="p-5 sm:p-6 backdrop-blur-xl border border-cyan-500/50 bg-gradient-to-br from-[#070e22]/95 via-[#0a1533]/90 to-[#060c1d]/95 shadow-[0_0_35px_rgba(0,210,255,0.2)]"
+        >
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            {/* QR Thumbnail with Hover Zoom & Click to Lightbox */}
+            <div
+              onClick={() => setIsQrLightboxOpen(true)}
+              className="relative group cursor-pointer w-full sm:w-56 max-w-xs shrink-0 rounded-2xl overflow-hidden border-2 border-cyan-400/60 shadow-[0_10px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(0,210,255,0.35)] transition-all duration-300 hover:scale-[1.03] hover:border-cyan-300 hover:shadow-[0_0_30px_rgba(0,210,255,0.5)] bg-white p-3"
+            >
+              <img
+                src="/week4-qr.png"
+                alt="4. Hafta QR Kod"
+                className="w-full h-auto object-contain block transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/90 text-cyan-200 border border-cyan-400 text-xs font-bold shadow-lg backdrop-blur-md">
+                  <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Büyüt / Tara</span>
+                </span>
+              </div>
+              <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-cyan-400/40 text-[10px] font-bold text-cyan-300">
+                QR Kod
+              </span>
+            </div>
+
+            {/* QR Info & Controls */}
+            <div className="flex-1 space-y-3.5 text-left w-full">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-xs font-bold shadow-[0_0_10px_rgba(0,210,255,0.2)]">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                  <span>4. Hafta QR Kodu</span>
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-2 py-0.5 rounded-full">
+                  Hazır & Aktif
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2 flex-wrap">
+                  <span>Mustafa Ali Güleç</span>
+                  <span className="text-sky-700">·</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-sky-400 font-bold text-base sm:text-lg">
+                    4. Hafta QR Kodu
+                  </span>
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                  4. haftaya ait QR kodu telefonunuzla tarayarak ilgili kaynağa veya içeriğe hızlıca ulaşabilirsiniz.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 flex-wrap pt-1">
+                <button
+                  onClick={() => setIsQrLightboxOpen(true)}
+                  className="btn-electric inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-xl shadow-[0_0_15px_rgba(0,210,255,0.4)] transition-all hover:scale-105 cursor-pointer"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>QR Kodu Büyüt / Tara</span>
+                </button>
+
+                <a
+                  href="/week4-qr.png"
+                  download="Mustafa_Ali_Gulec_4_Hafta_QR.png"
+                  className="group inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-sky-200 bg-[#0c1427] hover:bg-sky-950/90 border border-sky-700/60 hover:border-cyan-400 rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                  <span>QR İndir</span>
+                </a>
+
+                <a
+                  href="/week4-qr.png"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-cyan-300 hover:text-white underline underline-offset-2 ml-1"
+                >
+                  <span>Yeni Sekmede Gör</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </LaserBorderCard>
+      )}
+
+      {/* QR Lightbox Modal */}
+      {isQrLightboxOpen && (
+        <div
+          onClick={() => setIsQrLightboxOpen(false)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-lg w-full max-h-[92vh] flex flex-col items-center bg-[#070e22] border-2 border-cyan-400/80 rounded-2xl shadow-[0_0_50px_rgba(0,210,255,0.4)] overflow-hidden"
+          >
+            {/* Lightbox Header */}
+            <div className="w-full bg-[#0a1533] px-4 py-3 border-b border-cyan-500/30 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs sm:text-sm font-bold text-white truncate">
+                  4. Hafta · QR Kodu
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/week4-qr.png"
+                  download="Mustafa_Ali_Gulec_4_Hafta_QR.png"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-sky-900/80 hover:bg-sky-800 rounded-lg border border-sky-500/50 transition-colors shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-300" />
+                  <span>İndir</span>
+                </a>
+                <button
+                  onClick={() => setIsQrLightboxOpen(false)}
+                  className="p-1.5 text-sky-300 hover:text-white hover:bg-sky-900/60 rounded-lg transition-colors cursor-pointer"
+                  title="Kapat"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            {/* QR Image */}
+            <div className="overflow-auto max-h-[calc(92vh-60px)] p-6 flex items-center justify-center bg-white w-full">
+              <img
+                src="/week4-qr.png"
+                alt="4. Hafta QR Kodu"
+                className="max-h-[70vh] w-auto object-contain"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Program Items List Section with Full Rotating Laser Border */}
