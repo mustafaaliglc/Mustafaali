@@ -19,12 +19,12 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { NeonBackgroundCanvas, NeonColorMode } from './components/NeonBackgroundCanvas';
-import { LogoDownloadModal } from './components/LogoDownloadModal';
+import { PosterView } from './components/PosterView';
 
 export default function App() {
   const [store, setStore] = useState<ProgramStore>(() => loadProgramFromStorage());
   const [activeWeekNum, setActiveWeekNum] = useState<number>(1);
-  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'print' | 'admin'>('week');
+  const [currentView, setCurrentView] = useState<'week' | 'roadmap' | 'poster' | 'print' | 'admin'>('week');
   const [neonColorMode, setNeonColorMode] = useState<NeonColorMode | 'off'>(() => {
     try {
       const saved = localStorage.getItem('mag_neon_color_mode');
@@ -88,7 +88,6 @@ export default function App() {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
-  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
 
   // Save to localStorage whenever store changes
   useEffect(() => {
@@ -269,6 +268,7 @@ export default function App() {
               isAdmin={isAdmin}
               onOpenAdminLogin={() => setIsLoginModalOpen(true)}
               neonColorMode={neonColorMode}
+              onOpenPosterView={() => setCurrentView('poster')}
             />
           )}
 
@@ -280,6 +280,16 @@ export default function App() {
                 setActiveWeekNum(num);
                 setCurrentView('week');
               }}
+            />
+          )}
+
+          {currentView === 'poster' && (
+            <PosterView
+              onBack={() => {
+                setActiveWeekNum(2);
+                setCurrentView('week');
+              }}
+              neonColorMode={neonColorMode}
             />
           )}
 
@@ -333,30 +343,6 @@ export default function App() {
           setActiveWeekNum(num);
           setCurrentView('week');
         }}
-      />
-
-      {/* Floating Logo Showcase & Download Button (Bottom Left) */}
-      <button
-        onClick={() => setIsLogoModalOpen(true)}
-        title="Özel MAG Logo Tasarımlarını İncele ve İndir"
-        className="fixed bottom-5 left-5 z-40 flex items-center gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-[#070e22]/95 hover:bg-[#0b1838] border border-cyan-400/60 text-cyan-300 hover:text-white shadow-[0_0_20px_rgba(0,210,255,0.35)] hover:shadow-[0_0_25px_rgba(0,210,255,0.6)] transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer backdrop-blur-md group"
-      >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
-        </span>
-        <span className="text-xs font-semibold tracking-wide flex items-center gap-1.5">
-          <span>MAG Logo</span>
-          <span className="text-[10px] text-cyan-200/90 bg-cyan-950/90 px-1.5 py-0.5 rounded border border-cyan-500/40">
-            İndir
-          </span>
-        </span>
-      </button>
-
-      {/* MAG Logo Showcase & Download Modal */}
-      <LogoDownloadModal
-        isOpen={isLogoModalOpen}
-        onClose={() => setIsLogoModalOpen(false)}
       />
 
     </div>

@@ -244,8 +244,18 @@ export const MasterRoadmapView: React.FC<MasterRoadmapViewProps> = ({
                   )}
                 </p>
 
-                {/* Google Drive or Live Vercel Status */}
-                {week.driveFolderUrl ? (
+                {/* Google Drive, Live Vercel, or Week 2 Special Poster Status */}
+                {week.weekNumber === 2 ? (
+                  <div className="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-cyan-200 bg-cyan-950/80 px-2.5 py-1.5 rounded-lg border border-cyan-400/50 shadow-xs">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span className="truncate">Özel Tasarım Program Afişi</span>
+                    </div>
+                    <span className="text-[10px] text-cyan-300 bg-cyan-900/60 px-1.5 py-0.5 rounded border border-cyan-500/30">
+                      Afiş
+                    </span>
+                  </div>
+                ) : week.driveFolderUrl ? (
                   <div className="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-cyan-300 bg-cyan-950/80 px-2.5 py-1.5 rounded-lg border border-cyan-500/40 shadow-xs">
                     <div className="flex items-center gap-1.5 truncate">
                       {week.driveFolderUrl.includes('vercel.app') ? (

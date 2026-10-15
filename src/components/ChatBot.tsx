@@ -8,7 +8,8 @@ import {
   ExternalLink, 
   FolderOpen, 
   Bot,
-  Globe
+  Globe,
+  Image as ImageIcon
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
 
@@ -194,9 +195,12 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
 
       const isMarkdownLink = !!match[1] && !!match[2];
       const linkUrl = isMarkdownLink ? match[2] : match[3].replace(/[),.]+$/, '');
+      const isPoster = linkUrl.includes('afis.jpg') || linkUrl.includes('afis');
       const isVercel = linkUrl.includes('vercel.app');
       const isDrive = linkUrl.includes('drive.google.com');
-      const defaultLabel = isVercel
+      const defaultLabel = isPoster
+        ? '🖼️ Özel Tasarım Afişi Gör (/afis.jpg)'
+        : isVercel
         ? '🌐 Canlı Projeyi Aç (mustafaali2.vercel.app)'
         : isDrive
         ? '📁 Google Drive Klasörünü Aç'
@@ -206,12 +210,14 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
       elements.push(
         <div key={`link-${keyIdx++}`} className="my-1.5 inline-block">
           <a
-            href={linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`}
+            href={linkUrl.startsWith('http') || linkUrl.startsWith('/') ? linkUrl : `https://${linkUrl}`}
             target="_blank"
             rel="noopener noreferrer"
             className={`btn-electric inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-md active:scale-95`}
           >
-            {isDrive ? (
+            {isPoster ? (
+              <ImageIcon className="w-3.5 h-3.5 text-cyan-300" />
+            ) : isDrive ? (
               <FolderOpen className="w-3.5 h-3.5" />
             ) : isVercel ? (
               <Globe className="w-3.5 h-3.5" />
@@ -244,6 +250,7 @@ Hangi haftanın Google Drive klasörünü veya ders materyallerini istersin? İs
 
   const quickChips = [
     '📁 1. Hafta Drive Linki',
+    '🖼️ 2. Hafta Özel Afişi',
     '🌐 3. Hafta Canlı Proje Linki',
     `📌 ${activeWeekNum}. Haftanın Konusu Nedir?`,
     '📂 Hangi haftaların linki var?',

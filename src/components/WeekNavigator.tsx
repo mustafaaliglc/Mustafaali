@@ -5,7 +5,8 @@ import {
   FolderCheck,
   ChevronsLeft,
   ChevronsRight,
-  Globe
+  Globe,
+  Sparkles
 } from 'lucide-react';
 import { WeekPlan } from '../types/schedule';
 import { LaserBorderCard } from './LaserBorderCard';
@@ -111,7 +112,7 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
             </select>
           </div>
 
-          {currentWeek.driveFolderUrl && (
+          {currentWeek.driveFolderUrl ? (
             <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-cyan-300 bg-cyan-950/80 border border-cyan-500/40 px-2.5 py-1 rounded-lg shadow-sm">
               {currentWeek.driveFolderUrl.includes('vercel.app') ? (
                 <>
@@ -125,7 +126,12 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
                 </>
               )}
             </span>
-          )}
+          ) : currentWeek.weekNumber === 2 ? (
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold text-cyan-200 bg-cyan-950/90 border border-cyan-400/60 px-2.5 py-1 rounded-lg shadow-[0_0_12px_rgba(0,210,255,0.3)]">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+              <span>Özel Tasarım Afiş</span>
+            </span>
+          ) : null}
         </div>
 
         {/* Next button */}
@@ -189,6 +195,11 @@ export const WeekNavigator: React.FC<WeekNavigatorProps> = ({
                 {/* Status indicator dot */}
                 {isAllDone ? (
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-1 ring-[#090d1a]" />
+                ) : week.weekNumber === 2 ? (
+                  <span
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-300 ring-1 ring-[#090d1a] shadow-[0_0_8px_rgba(0,210,255,0.8)] animate-pulse"
+                    title="2. Hafta Özel Tasarım Afişi Mevcut"
+                  />
                 ) : week.driveFolderUrl ? (
                   <span
                     className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-[#090d1a] animate-pulse"

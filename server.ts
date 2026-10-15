@@ -53,6 +53,10 @@ function generateSmartFallbackResponse(
         reply += `\n`;
       }
 
+      if (targetWeek.weekNumber === 2) {
+        reply += `🖼️ **2. Hafta Özel Tasarım Afişi:**\nBu haftada Mustafa Ali Güleç'in 38 haftalık web tasarımı yolculuğunu görselleştiren özel tanıtım afişi (/afis.jpg) yer almaktadır. Sayfadaki afiş vitrininden tam boyutta inceleyebilir veya indirebilirsiniz.\n\n`;
+      }
+
       if (targetWeek.driveFolderUrl) {
         if (targetWeek.driveFolderUrl.includes('vercel.app')) {
           reply += `🌐 **Canlı Web Projesi (Vercel):**\n${targetWeek.driveFolderUrl}\n\nBu bağlantıdan haftaya ait canlı yayındaki web projesini doğrudan ziyaret edebilirsiniz!`;
@@ -60,10 +64,17 @@ function generateSmartFallbackResponse(
           reply += `📂 **Google Drive Ders & Kaynak Klasörü:**\n${targetWeek.driveFolderUrl}\n\nBu bağlantıdan haftaya ait kaynak kodları, ders videolarını ve tasarım dosyalarını indirebilirsiniz.`;
         }
       } else {
-        reply += `📂 Bu hafta için henüz bağlantı tanımlanmamış. Yönetici (Admin) panelinden linkinizi ekleyebilirsiniz.`;
+        if (targetWeek.weekNumber !== 2) {
+          reply += `📂 Bu hafta için henüz bağlantı tanımlanmamış. Yönetici (Admin) panelinden linkinizi ekleyebilirsiniz.`;
+        }
       }
       return reply;
     }
+  }
+
+  // Afiş / Poster questions
+  if (q.includes('afiş') || q.includes('afis') || q.includes('poster')) {
+    return `🖼️ **Mustafa Ali Güleç · 38 Haftalık Web Tasarımı ve Kodlama Özel Afişi**\n\nEklediğiniz afiş **2. Haftada** yer almaktadır!\n\n✨ **Afişe Nasıl Ulaşabilirsiniz?**\n1. **2. Hafta Sayfası:** Haftalık programdan 2. Haftayı seçtiğinizde özel neon çerçeveli afiş vitrini, HD önizleme, tam ekran büyütme (lightbox) ve indirme butonları karşınıza çıkar.\n2. **Üst Menüdeki Buton:** Üst çubuktaki **"Afiş (2. Hafta)"** butonuna tıklayarak tam sayfa afiş sunumunu doğrudan açabilirsiniz.\n3. **Doğrudan Bağlantı:** [/afis.jpg](/afis.jpg) adresinden afişi tam çözünürlükte görüntüleyebilir ve indirebilirsiniz.`;
   }
 
   // 2. Active / Current Week
